@@ -29,3 +29,5 @@ export interface Subtask {
   title: string;
   isCompleted: boolean;
 }
+
+export type Theme = "light" | "dark";
