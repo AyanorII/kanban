@@ -12,6 +12,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
 }>(({ theme, open }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
+  minHeight: "100vh",
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -65,7 +66,7 @@ const Layout = observer(({ children, isDarkMode, toggleTheme }: Props) => {
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
       />
-      <Main open={open} sx={{bgcolor: "body.background"}}>
+      <Main open={open} sx={{ bgcolor: "body.background", overflow: "auto" }}>
         <DrawerHeader />
         {children}
       </Main>

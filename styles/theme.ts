@@ -23,6 +23,7 @@ const baseButtonStyles = {
     borderRadius: "24px",
     textTransform: "capitalize",
     color: "#FFF",
+    fontWeight: 600,
   },
   containedPrimary: {
     "&:hover": {
