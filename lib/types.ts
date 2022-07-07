@@ -1,17 +1,17 @@
-import { WithId, Document, ObjectId } from "mongodb";
-
-export interface Board extends WithId<Document> {
-  _id: ObjectId;
+export interface Board {
+  id: number;
   name: string;
   columns: Column[];
 }
 
 export interface Column {
+  id: number;
   name: string;
   tasks: Task[];
 }
 
 export interface Task {
+  id: number;
   title: string;
   description: string;
   status: Status;
@@ -26,8 +26,9 @@ export enum Status {
 }
 
 export interface Subtask {
+  id: number;
   title: string;
-  isCompleted: boolean;
+  completed: boolean;
 }
 
 export type Theme = "light" | "dark";
