@@ -4,9 +4,10 @@ import { Container, Grid, Paper, Stack, Switch } from "@mui/material";
 
 type Props = {
   toggleTheme: () => void;
+  isDarkMode: boolean;
 };
 
-const ThemeSwitch = ({toggleTheme}: Props) => {
+const ThemeSwitch = ({ toggleTheme, isDarkMode }: Props) => {
   return (
     <Container>
       <Paper sx={{ width: "100%", bgcolor: "body.background" }}>
@@ -16,7 +17,11 @@ const ThemeSwitch = ({toggleTheme}: Props) => {
               <WbSunnyIcon sx={{ color: "text.light" }} />
             </Grid>
             <Grid item xs="auto">
-              <Switch onChange={toggleTheme} sx={{ bgcolor: "primary" }} />
+              <Switch
+                onChange={toggleTheme}
+                checked={isDarkMode}
+                sx={{ bgcolor: "primary" }}
+              />
             </Grid>
             <Grid item xs="auto" alignItems="center" display="flex">
               <NightlightRoundIcon sx={{ color: "text.light" }} />

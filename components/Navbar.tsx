@@ -8,7 +8,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
-import { BoardContext } from "../lib/context/BoardsContext";
+import { RootContext } from "../lib/context/StoreContext";
 import { Board as BoardInterface } from "../lib/types";
 import { DrawerHeader, drawerWidth } from "./Layout";
 import Logo from "./Logo";
@@ -23,7 +23,8 @@ type Props = {
 
 const Navbar = observer(
   ({ isDarkMode, open, handleDrawerClose, toggleTheme }: Props) => {
-    const store = useContext(BoardContext);
+    const store = useContext(RootContext);
+    const { boards } = store.board;
 
     const drawerStyles = {
       width: drawerWidth,
@@ -56,16 +57,16 @@ const Navbar = observer(
             letterSpacing="2.4px"
             marginTop={2}
           >
-            All boards ({store.boards.length})
+            All boards ({boards.length})
           </Typography>
         </Container>
         <Stack justifyContent="space-between" height="100%" paddingBottom={3}>
           <List sx={{ paddingRight: "24px" }}>
-            {store.boards.map((board, index) => {
+            {boards.map((board, index) => {
               return <Board key={index} board={board} />;
             })}
           </List>
-          <ThemeSwitch toggleTheme={toggleTheme} />
+          <ThemeSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
         </Stack>
       </Drawer>
     );
@@ -79,11 +80,12 @@ type BoardProps = {
 };
 
 const Board = observer(({ board }: BoardProps) => {
-  const store = useContext(BoardContext);
+  const store = useContext(RootContext);
+  const { currentBoard } = store.board;
 
-  const { _id: id, name } = board;
+  const { id, name } = board;
 
-  const isCurrentBoard = id === store.currentBoard?._id;
+  const isCurrentBoard = id === currentBoard?.id;
 
   const transition = { transition: "all 0.35s ease-in-out" };
 
@@ -105,7 +107,7 @@ const Board = observer(({ board }: BoardProps) => {
 
   return (
     <ListItem
-      onClick={() => store.setCurrentBoard(board)}
+      onClick={() => store.board.setCurrentBoard(board)}
       disablePadding
       sx={liStyle}
     >

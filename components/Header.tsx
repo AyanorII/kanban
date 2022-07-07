@@ -3,7 +3,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
-import { BoardContext } from "../lib/context/BoardsContext";
+import { RootContext } from "../lib/context/StoreContext";
 import { drawerWidth } from "./Layout";
 import Logo from "./Logo";
 
@@ -35,7 +35,8 @@ type Props = {
 };
 
 const Header = observer(({ open, handleDrawerOpen, isDarkMode }: Props) => {
-  const store = useContext(BoardContext);
+  const store = useContext(RootContext);
+  const { currentBoard } = store.board;
 
   return (
     <AppBar
@@ -51,7 +52,7 @@ const Header = observer(({ open, handleDrawerOpen, isDarkMode }: Props) => {
           <Logo theme={isDarkMode ? "dark" : "light"} />
         </Box>
         <Typography variant="h6" component="h1" color="text.main">
-          {store.currentBoard?.name}
+          {currentBoard?.name}
         </Typography>
       </Toolbar>
     </AppBar>

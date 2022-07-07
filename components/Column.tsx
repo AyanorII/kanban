@@ -1,4 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
+import { observer } from "mobx-react-lite";
+import { useTasks } from "../lib/hooks";
 import { Column as ColumnInterface } from "../lib/types";
 import Task from "./Task";
 
@@ -6,8 +8,10 @@ type Props = {
   column: ColumnInterface;
 };
 
-const Column = ({ column }: Props) => {
-  const { name, tasks } = column;
+const Column = observer(({ column }: Props) => {
+  const { name, id } = column;
+
+  const { tasks } = useTasks(id);
 
   return (
     <Stack gap={3} width="280px" minWidth="280px">
@@ -20,7 +24,7 @@ const Column = ({ column }: Props) => {
           textTransform="uppercase"
           color="text.light"
         >
-          {name} ({tasks.length})
+          {name}
         </Typography>
       </Stack>
       {tasks.map((task, index) => {
@@ -28,7 +32,7 @@ const Column = ({ column }: Props) => {
       })}
     </Stack>
   );
-};
+});
 
 export default Column;
 
