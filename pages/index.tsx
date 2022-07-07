@@ -1,25 +1,47 @@
 import AddIcon from "@mui/icons-material/Add";
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Button, Card, CardContent, Stack, Typography } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import type { NextPage } from "next";
 import { useContext } from "react";
 import Column from "../components/Column";
-import { BoardContext } from "../lib/context/BoardsContext";
+import { RootContext } from "../lib/context/StoreContext";
 
 const Home: NextPage = observer(() => {
-  const store = useContext(BoardContext);
+  const store = useContext(RootContext);
+  const { boards, currentBoard } = store.board;
 
-  if (store.boards.length === 0) {
+  if (boards.length === 0) {
     return <EmptyBoard />;
   }
 
+  const cardStyles = {
+    width: "280px",
+    minWidth: "280px",
+    marginTop: 7,
+    borderRadius: 3,
+    cursor: "pointer",
+  };
+
   return (
     <Stack flexDirection="row" gap={4}>
-      {store.currentBoard?.columns.map((column, index) => {
-        return (
-          <Column key={index} column={column} />
-        );
+      {currentBoard.columns.map((column, index) => {
+        return <Column key={index} column={column} />;
       })}
+      <Card sx={cardStyles}>
+        <CardContent>
+          <Stack
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="center"
+            height="80vh"
+          >
+            <AddIcon sx={{ color: "text.light" }} />
+            <Typography variant="h6" color="text.light">
+              New Column
+            </Typography>
+          </Stack>
+        </CardContent>
+      </Card>
     </Stack>
   );
 });

@@ -15,7 +15,6 @@ export interface Task {
   title: string;
   description: string;
   status: Status;
-  subtasks: Subtask[];
 }
 
 export enum Status {

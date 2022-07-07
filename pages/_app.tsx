@@ -4,21 +4,29 @@ import {
   responsiveFontSizes,
   ThemeOptions,
   ThemeProvider,
+  useMediaQuery,
 } from "@mui/material";
 import type { AppProps } from "next/app";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
-import Navbar from "../components/Navbar";
-import BoardsContext from "../lib/context/BoardsContext";
+import BoardsContext from "../lib/context/StoreContext";
 import "../styles/globals.css";
 import getDesignTokens from "../styles/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const [mode, setMode] = useState<"light" | "dark">(
+    prefersDarkMode ? "dark" : "light"
+  );
+
+  useEffect(() => {
+    setMode(prefersDarkMode ? "dark" : "light");
+  }, [prefersDarkMode]);
 
   let theme = useMemo(
     () => createTheme(getDesignTokens(mode) as ThemeOptions),
-    [mode]
+    [prefersDarkMode, mode]
   );
   theme = responsiveFontSizes(theme);
 
