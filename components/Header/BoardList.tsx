@@ -6,27 +6,31 @@ import {
   ListItemIcon,
   Typography,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Board } from "../../lib/types";
+import { setCurrentBoard } from "../../stores/boardSlice";
+import { RootState } from "../../stores/store";
 import { PRIMARY_COLOR, WHITE_COLOR } from "../../styles/theme";
 
-type Props = {
-  boards: Board[];
-  handleCurrentBoardChange: (id: number) => void;
-  currentBoard: Board | null;
-};
+const BoardList = () => {
+  const dispatch = useDispatch();
 
-const BoardList = ({
-  boards,
-  handleCurrentBoardChange,
-  currentBoard,
-}: Props) => {
+  const boards = useSelector((state: RootState) => state.boards.boards);
+  const currentBoard = useSelector(
+    (state: RootState) => state.boards.currentBoard
+  );
+
+  const handleClick = (board: Board) => {
+    dispatch(setCurrentBoard(board));
+  }
+
   return (
     <List>
       {boards.map((board) => (
         <StyledListItem
           key={board.id}
-          onClick={() => handleCurrentBoardChange(board.id)}
+          onClick={() => handleClick(board)}
           disablePadding
           sx={{ position: "relative" }}
           className={currentBoard?.id === board.id ? "active" : ""}
@@ -45,7 +49,7 @@ const BoardList = ({
           </ListItemButton>
         </StyledListItem>
       ))}
-      <ListItem sx={{paddingLeft: 0}}>
+      <ListItem sx={{ paddingLeft: 0 }}>
         <ListItemButton disableRipple>
           <DashboardIcon />
           <Typography variant="body1" fontWeight={600} color="primary">
@@ -82,7 +86,7 @@ const StyledListItem = styled(ListItem)`
 `;
 
 type DashboardIconProps = {
-  active?: boolean
+  active?: boolean;
 };
 
 const DashboardIcon = ({ active }: DashboardIconProps) => {
@@ -90,8 +94,7 @@ const DashboardIcon = ({ active }: DashboardIconProps) => {
     <ListItemIcon sx={{ minWidth: "auto", marginRight: 2 }}>
       <DashboardOutlinedIcon
         sx={{
-          color:
-            active ? WHITE_COLOR : "text.secondary",
+          color: active ? WHITE_COLOR : "text.secondary",
         }}
       />
     </ListItemIcon>

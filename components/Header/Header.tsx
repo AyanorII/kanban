@@ -7,12 +7,13 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import * as React from "react";
-import { Board } from "../../lib/types";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores/store";
 import { MEDIUM_GREY_COLOR, WHITE_COLOR } from "../../styles/theme";
 import BoardList from "./BoardList";
 
@@ -66,37 +67,31 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-type Props = {
-  currentBoard: Board | null;
-  boards: Board[];
-  handleCurrentBoardChange: (id: number) => void;
-};
-
-export default function PersistentDrawerLeft({
-  currentBoard,
-  boards,
-  handleCurrentBoardChange,
-}: Props) {
-  const theme = useTheme();
+export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const currentBoard = useSelector(
+    (state: RootState) => state.boards.currentBoard
+  );
+  const boards = useSelector((state: RootState) => state.boards.boards);
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} sx={{ bgcolor: "background.dark" }}>
         <Toolbar sx={{ justifyContent: "space-between", paddingRight: 0 }}>
-          <Stack flexDirection="row" alignItems="center">
+          <Stack
+            flexDirection="row"
+            alignItems="center"
+            onClick={toggleDrawer}
+            sx={{ cursor: "pointer" }}
+          >
             {!open && (
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={toggleDrawer}
-                edge="start"
-              >
+              <IconButton color="inherit" aria-label="open drawer" edge="start">
                 <Image src="/logo-mobile.svg" width="25px" height="25px" />
               </IconButton>
             )}
@@ -137,7 +132,7 @@ export default function PersistentDrawerLeft({
             <Image src="/logo-light.svg" width="152px" height="25px" />
           </IconButton>
         </DrawerHeader>
-        <Divider sx={{bgcolor: `${MEDIUM_GREY_COLOR}30`}}/>
+        <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}30` }} />
         <Typography
           variant="body1"
           fontSize="1rem"
@@ -149,11 +144,7 @@ export default function PersistentDrawerLeft({
           gutterBottom
           marginTop={3}
         >{`All Boards (${boards.length})`}</Typography>
-        <BoardList
-          currentBoard={currentBoard}
-          boards={boards}
-          handleCurrentBoardChange={handleCurrentBoardChange}
-        />
+        <BoardList />
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

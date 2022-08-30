@@ -1,13 +1,7 @@
-import { Box, Button } from '@mui/material'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from "next";
 
 const Home: NextPage = () => {
-  return (
-    <>fasdf</>
-  )
-}
+  return <>Boards:</>;
+};
 
-export default Home
+export default Home;
