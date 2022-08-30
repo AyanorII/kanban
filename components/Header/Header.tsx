@@ -14,7 +14,7 @@ import Image from "next/image";
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/store";
-import { MEDIUM_GREY_COLOR, WHITE_COLOR } from "../../styles/theme";
+import { DARK_GREY_COLOR, MEDIUM_GREY_COLOR, WHITE_COLOR } from "../../styles/theme";
 import BoardList from "./BoardList";
 
 const drawerWidth = 240;
@@ -82,7 +82,7 @@ export default function PersistentDrawerLeft() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} sx={{ bgcolor: "background.dark" }}>
+      <AppBar position="fixed" open={open} sx={{ bgcolor: DARK_GREY_COLOR }}>
         <Toolbar sx={{ justifyContent: "space-between", paddingRight: 0 }}>
           <Stack
             flexDirection="row"
@@ -119,7 +119,7 @@ export default function PersistentDrawerLeft() {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
-            bgcolor: "background.dark",
+            bgcolor: DARK_GREY_COLOR,
             boxSizing: "border-box",
           },
         }}

@@ -26,7 +26,7 @@ const Layout = ({ children }: Props) => {
   }, []);
 
   return (
-    <Box bgcolor="background.dark">
+    <Box bgcolor="background.dark" minHeight="100vh">
       <Header />
       {children}
     </Box>
