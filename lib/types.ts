@@ -1,18 +1,20 @@
 export interface Board {
+  id: number;
   name: string;
-  columns: Column[];
 }
 
 export interface Column {
+  id: number;
   name: string;
-  tasks: Task[];
+  boardId: number;
 }
 
 export interface Task {
+  id: number;
   title: string;
   description: string;
   status: Status;
-  subtasks: Subtask[];
+  columnId: number
 }
 
 export enum Status {
@@ -23,6 +25,8 @@ export enum Status {
 }
 
 export interface Subtask {
+  id: number;
   title: string;
   isCompleted: boolean;
+  taskId: number;
 }
