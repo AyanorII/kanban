@@ -7,9 +7,14 @@ type BoardState = {
   currentBoard: Board | null;
 }
 
+const initialState: BoardState = {
+  currentBoard: null,
+  boards: []
+}
+
 export const boardsSlice = createSlice({
   name: "boards",
-  initialState: {currentBoard: null, boards: []} as BoardState,
+  initialState,
   reducers: {
     setCurrentBoard(state, action: PayloadAction<Board>) {
       state.currentBoard = action.payload;
