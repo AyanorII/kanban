@@ -1,36 +1,34 @@
-import { Box } from "@mui/material";
-import axios from "axios";
-import React, { useEffect } from "react";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Board } from "../lib/types";
-import { setBoards, setCurrentBoard } from "../stores/boardSlice";
+import { useBoardsQuery } from "../stores/api/boardsApi";
+import { setCurrentBoard } from "../stores/boardsSlice";
+import { DARK_BACKGROUND_COLOR } from "../styles/theme";
 import Header from "./Header/Header";
+import Main from "./Main";
+import Nav from "./Nav";
 
 type Props = {
   children: React.ReactNode;
 };
 
-const Layout = ({ children }: Props) => {
+export default function Layout({ children }: Props) {
   const dispatch = useDispatch();
+  const { data: boards, isLoading, error } = useBoardsQuery("");
 
   useEffect(() => {
-    const fetchBoards = async () => {
-      const response = await axios.get("http://localhost:8080/api/v1/boards");
-      const boards = (await response.data) as Board[];
-
-      dispatch(setBoards(boards));
+    if (boards && !isLoading && !error) {
       dispatch(setCurrentBoard(boards[0]));
-    };
-
-    fetchBoards();
-  }, []);
+    }
+  }, [isLoading, error]);
 
   return (
-    <Box bgcolor="background.dark" minHeight="100vh">
+    <Box bgcolor={DARK_BACKGROUND_COLOR} sx={{ display: "flex" }}>
+      <CssBaseline />
       <Header />
-      {children}
+      <Nav />
+      <Main>{children}</Main>
     </Box>
   );
-};
-
-export default Layout;
+}
