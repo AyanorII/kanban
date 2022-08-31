@@ -20,7 +20,7 @@ export const DARK_GREY_COLOR = "#2B2C37";
 export const MEDIUM_GREY_COLOR = "#828FA3";
 /* ------------------------------- Grey colors ------------------------------ */
 
-let theme = createTheme({
+let muiTheme = createTheme({
   palette: {
     primary: {
       main: PRIMARY_COLOR,
@@ -80,6 +80,37 @@ let theme = createTheme({
 });
 
 
-theme = responsiveFontSizes(theme)
+muiTheme = responsiveFontSizes(muiTheme)
 
-export default theme
+const scTheme = {
+  colors: {
+    primary: {
+      main: PRIMARY_COLOR,
+      light: PRIMARY_LIGHT_COLOR,
+    },
+    danger: {
+      main: DANGER_COLOR,
+      light: DANGER_LIGHT_COLOR
+    },
+    background: {
+      dark: DARK_BACKGROUND_COLOR,
+      light: LIGHT_BACKGROUND_COLOR,
+    },
+    pitch: {
+      white: WHITE_COLOR,
+      black: BLACK_COLOR
+    },
+    grey: {
+      dark: DARK_GREY_COLOR,
+      medium: MEDIUM_GREY_COLOR
+    },
+    text: {
+      primary: LIGHT_BACKGROUND_COLOR,
+      secondary: MEDIUM_GREY_COLOR
+    }
+  }
+}
+
+type ScThemeType = typeof scTheme;
+
+export {muiTheme, scTheme, ScThemeType}
