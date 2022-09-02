@@ -12,7 +12,7 @@ import {
   useSubtasksQuery,
   useUpdateSubtaskMutation,
 } from "../../stores/api/subtasksApi";
-import { DARK_BACKGROUND_COLOR } from "../../styles/theme";
+import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR, PRIMARY_LIGHT_COLOR } from '../../styles/theme';
 import Modal from "../Modal";
 
 type Props = {
@@ -111,6 +111,12 @@ const Checkbox = ({ subtask, subtasks }: CheckboxProps) => {
         gap={1}
         p={1}
         onClick={handleClick}
+        sx={{
+          cursor: "pointer",
+          transition: "all 0.2s ease-in-out",
+          "&:hover": {
+            backgroundColor: `${PRIMARY_COLOR}80`
+        } }}
       >
         <MuiCheckbox checked={checked} sx={{ color: "white" }} />
         <Typography

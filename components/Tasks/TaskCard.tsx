@@ -2,8 +2,9 @@ import { Card, CardContent, Typography } from "@mui/material";
 import { useState } from "react";
 import { Subtask, Task } from "../../lib/types";
 import { useSubtasksQuery } from "../../stores/api/subtasksApi";
-import { DARK_GREY_COLOR } from "../../styles/theme";
+import { DARK_GREY_COLOR, PRIMARY_COLOR } from "../../styles/theme";
 import TaskInfo from "./TaskInfo";
+import styled from 'styled-components';
 
 type Props = {
   task: Task;
@@ -27,7 +28,7 @@ const TaskCard = ({ task }: Props) => {
     subtasks?.filter((subtask: Subtask) => subtask.completed) || [];
 
   return (
-    <Card
+    <StyledCard
       sx={{ bgcolor: DARK_GREY_COLOR, cursor: "pointer" }}
       onClick={handleOpen}
     >
@@ -43,6 +44,7 @@ const TaskCard = ({ task }: Props) => {
           color="text.primary"
           fontWeight={600}
           gutterBottom
+          className="task-card__title"
         >
           {title}
         </Typography>
@@ -60,8 +62,23 @@ const TaskCard = ({ task }: Props) => {
           {error && "Error :("}
         </Typography>
       </CardContent>
-    </Card>
+    </StyledCard>
   );
 };
 
 export default TaskCard;
+
+const StyledCard = styled(Card)`
+  background-color: ${DARK_GREY_COLOR};
+  cursor: pointer;
+
+  .task-card__title {
+    transition: all 0.15s ease-in-out;
+  }
+
+  &:hover {
+    .task-card__title {
+      color: ${PRIMARY_COLOR};
+    }
+  }
+`;

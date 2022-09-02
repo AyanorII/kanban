@@ -81,8 +81,19 @@ const StyledListItem = styled(ListItem)`
     transition: all 0.5s;
   }
 
+  &:hover p {
+    color: ${PRIMARY_COLOR};
+  }
+
+  &:hover::before {
+    background-color: ${WHITE_COLOR};
+    width: 90%;
+  }
+
   &.active {
-    color: ${WHITE_COLOR};
+    p {
+      color: ${WHITE_COLOR};
+    }
 
     &::before {
       background-color: ${PRIMARY_COLOR};
