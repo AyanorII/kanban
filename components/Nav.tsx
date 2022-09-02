@@ -1,13 +1,13 @@
-import React from 'react'
-import { styled } from "@mui/material/styles";
+import { Divider, IconButton, Typography } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
-import { Divider, IconButton, Typography } from '@mui/material';
-import Image from 'next/image';
-import { DARK_GREY_COLOR, MEDIUM_GREY_COLOR } from '../styles/theme';
-import BoardList from './Header/BoardList';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../stores/store';
-import { toggleNav } from '../stores/navSlice';
+import { styled } from "@mui/material/styles";
+import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import { useBoardsQuery } from "../stores/api/boardsApi";
+import { toggleNav } from "../stores/navSlice";
+import { RootState } from "../stores/store";
+import { DARK_GREY_COLOR, MEDIUM_GREY_COLOR } from "../styles/theme";
+import BoardList from "./Header/BoardList";
 
 export const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -17,19 +17,15 @@ export const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-type Props = {
-
-};
-
-const Nav = (props: Props) => {
-  const dispatch = useDispatch()
-  const open = useSelector((state: RootState) => state.nav.open)
+const Nav = () => {
+  const dispatch = useDispatch();
+  const open = useSelector((state: RootState) => state.nav.open);
   const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
-  const boards = useSelector((state: RootState) => state.boards.boards);
 
+  const { data: boards, isLoading, error } = useBoardsQuery();
   const toggleNavbar = () => {
-    dispatch(toggleNav())
-  }
+    dispatch(toggleNav());
+  };
 
   return (
     <Drawer
@@ -52,20 +48,23 @@ const Nav = (props: Props) => {
         </IconButton>
       </DrawerHeader>
       <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}30` }} />
-      <Typography
-        variant="body1"
-        fontSize="1rem"
-        fontWeight={600}
-        letterSpacing="1.2px"
-        textTransform="uppercase"
-        color="text.secondary"
-        marginLeft={2}
-        gutterBottom
-        marginTop={3}
-      >{`All Boards (${boards.length})`}</Typography>
+      {isLoading && <div>Loading...</div>}
+      {boards && (
+        <Typography
+          variant="body1"
+          fontSize="1rem"
+          fontWeight={600}
+          letterSpacing="1.2px"
+          textTransform="uppercase"
+          color="text.secondary"
+          marginLeft={2}
+          gutterBottom
+          marginTop={3}
+        >{`All Boards (${boards?.length})`}</Typography>
+      )}
       <BoardList />
     </Drawer>
   );
-}
+};
 
-export default Nav
+export default Nav;

@@ -2,7 +2,6 @@ import { Button, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useSelector } from "react-redux";
-import { Column as IColumn } from "../../lib/types";
 import { useColumnsQuery } from "../../stores/api/columnsApi";
 import { RootState } from "../../stores/store";
 import Column from "./Column";
@@ -16,7 +15,8 @@ const ColumnsList = () => {
     data: columns,
     isLoading,
     error,
-  } = useColumnsQuery(currentBoard?.id || skipToken);
+    isError,
+  } = useColumnsQuery(currentBoard ?? skipToken);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -26,9 +26,13 @@ const ColumnsList = () => {
     return <EmptyBoard />;
   }
 
+  if (error) {
+    return <>Error</>;
+  }
+
   return (
     <Stack flexDirection="row" gap={3}>
-      {columns?.map((column: IColumn) => (
+      {columns?.map((column) => (
         <Column key={column.id} column={column} />
       ))}
     </Stack>

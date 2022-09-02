@@ -9,25 +9,31 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Board } from "../../lib/types";
-import { setCurrentBoard } from "../../stores/boardSlice";
+import { useBoardsQuery } from "../../stores/api/boardsApi";
+import { setCurrentBoard } from "../../stores/boardsSlice";
 import { RootState } from "../../stores/store";
 import { PRIMARY_COLOR, WHITE_COLOR } from "../../styles/theme";
 
 const BoardList = () => {
   const dispatch = useDispatch();
 
-  const boards = useSelector((state: RootState) => state.boards.boards);
+  const { data: boards, isLoading, error } = useBoardsQuery();
+
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
 
   const handleClick = (board: Board) => {
     dispatch(setCurrentBoard(board));
-  }
+
+    if (window) {
+      window.localStorage.setItem("currentBoard", JSON.stringify(board));
+    }
+  };
 
   return (
     <List>
-      {boards.map((board) => (
+      {boards?.map((board: Board) => (
         <StyledListItem
           key={board.id}
           onClick={() => handleClick(board)}

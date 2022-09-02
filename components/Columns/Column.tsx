@@ -9,15 +9,17 @@ type Props = {
 };
 
 const Column = ({ column }: Props) => {
-  const { name, id: columnId } = column;
-  const { data: tasks, isLoading, error } = useTasksQuery(columnId);
+  const { data: tasks, isLoading, error } = useTasksQuery(column);
 
   return (
     <Stack gap={2} width="280px">
       {isLoading && !tasks && <div>Loading...</div>}
       {tasks && (
         <>
-          <ColumnName name={name.toLowerCase()} tasksNumber={tasks.length} />
+          <ColumnName
+            name={column.name.toLowerCase()}
+            tasksNumber={tasks.length}
+          />
           <Stack gap={3}>
             {tasks.map((task) => (
               <TaskCard key={task.id} task={task} />
