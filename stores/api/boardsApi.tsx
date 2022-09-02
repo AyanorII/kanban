@@ -1,17 +1,14 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { Board } from "../../lib/types";
+import { apiSlice } from "../apiSlice";
 
-export const boardsApi = createApi({
-  reducerPath: "boardsApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/api/v1/boards",
-  }),
+const boardsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    boards: builder.query({
-      query: () => "",
-      transformResponse: (response: Board[]) => response,
+    boards: builder.query<Board[], void>({
+      query: () => "/boards",
+      providesTags: ["Boards", "Columns", "Subtasks", "Subtasks"],
     }),
   }),
+  overrideExisting: false,
 });
 
-export const { useBoardsQuery } = boardsApi;
+export const { useBoardsQuery } = boardsApi

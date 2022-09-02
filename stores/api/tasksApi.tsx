@@ -1,17 +1,14 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { Column, Task } from "../../lib/types";
+import { apiSlice } from "../apiSlice";
 
-export const tasksApi = createApi({
-  reducerPath: "tasksApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/api/v1/columns",
-  }),
+const tasksApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    tasks: builder.query({
-      query: (columnId: number) => `/${columnId}`,
-      transformResponse: (response: Column): Task[] => response.tasks!,
+    tasks: builder.query<Task[], Column>({
+      query: (column: Column) => `/columns/${column.id}/tasks`,
+      providesTags: ["Tasks"],
     }),
   }),
+  overrideExisting: false,
 });
 
 export const { useTasksQuery } = tasksApi;

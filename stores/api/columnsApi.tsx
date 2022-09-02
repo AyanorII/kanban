@@ -1,23 +1,13 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { Board, Column } from "../../lib/types";
+import { apiSlice } from "../apiSlice";
 
-type ColumnState = {
-  columns: Column[];
-  loading: boolean;
-  error: string | null;
-};
-
-export const columnsApi = createApi({
-  reducerPath: "columnsApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/api/v1/boards",
-  }),
+const columnsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    columns: builder.query({
-      query: (boardId: number) => `/${boardId}`,
-      transformResponse: (response: Board): Column[] => response.columns!,
+    columns: builder.query<Column[], Board>({
+      query: (board: Board) => `/boards/${board.id}/columns`,
     }),
   }),
+  overrideExisting: false,
 });
 
 export const { useColumnsQuery } = columnsApi;
