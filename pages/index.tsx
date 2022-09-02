@@ -1,18 +1,46 @@
 import { Container } from "@mui/material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
-import type { NextPage } from "next";
-import { useSelector } from "react-redux";
+import axios from "axios";
+import type { GetStaticProps, NextPage } from "next";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import ColumnsList from "../components/Columns/ColumnsList";
-import { useColumnsQuery } from "../stores/api/columnsApi";
-import { RootState } from "../stores/store";
+import { Board } from "../lib/types";
+import { setCurrentBoard } from "../stores/boardsSlice";
 
-const Home: NextPage = () => {
-  const currentBoard = useSelector(
-    (state: RootState) => state.boards.currentBoard
-  );
-  const { data, error, isLoading, isSuccess } = useColumnsQuery(
-    currentBoard?.id || skipToken
-  );
+type Props = {
+  boards: Board[];
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  const response = await axios.get("http://localhost:8080/api/v1/boards");
+  const boards = response.data;
+
+  return {
+    props: {
+      boards,
+    },
+  };
+};
+
+const Home: NextPage<Props> = ({ boards }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (window) {
+      const currentBoardInLocalStorage =
+        window.localStorage.getItem("currentBoard");
+
+      if (currentBoardInLocalStorage) {
+        const parsedCurrentBoard = JSON.parse(currentBoardInLocalStorage);
+        dispatch(setCurrentBoard(parsedCurrentBoard));
+      } else {
+        dispatch(setCurrentBoard(boards[0]));
+        window.localStorage.setItem("currentBoard", JSON.stringify(boards[0]));
+      }
+
+      return () => {};
+    }
+  }, []);
 
   return (
     <Container maxWidth={false}>
