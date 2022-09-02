@@ -15,8 +15,10 @@ export const navSlice = createSlice({
   initialState,
   reducers: {
     toggleNav: (state, action: PayloadAction<void>) => {
-      state.open = !state.open;
-      return state;
+      return {
+        ...state,
+        open: !state.open,
+      };
     },
   },
 });

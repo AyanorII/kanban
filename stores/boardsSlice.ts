@@ -3,32 +3,28 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Board } from "../lib/types";
 
 type BoardState = {
-  boards: Board[];
   currentBoard: Board | null;
-}
+};
 
 const initialState: BoardState = {
   currentBoard: null,
-  boards: []
-}
+};
 
 export const boardsSlice = createSlice({
   name: "boards",
   initialState,
   reducers: {
     setCurrentBoard(state, action: PayloadAction<Board>) {
-      state.currentBoard = action.payload;
-    },
-    setBoards: (state, action: PayloadAction<Board[]>) => {
-      state.boards = action.payload;
-
-      return state
+      return {
+        ...state,
+        currentBoard: action.payload,
+      };
     },
   },
 });
 
 // this is for dispatch
-export const { setBoards, setCurrentBoard } = boardsSlice.actions;
+export const { setCurrentBoard } = boardsSlice.actions;
 
 // this is for configureStore
 export default boardsSlice.reducer;
