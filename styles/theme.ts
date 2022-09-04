@@ -1,5 +1,4 @@
-import { responsiveFontSizes } from "@mui/material";
-import { createTheme } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material";
 
 /* ------------------------------- Main colors ------------------------------ */
 export const PRIMARY_COLOR = "#635FC7";
@@ -28,7 +27,7 @@ let muiTheme = createTheme({
     },
     danger: {
       main: DANGER_COLOR,
-      light: DANGER_LIGHT_COLOR
+      light: DANGER_LIGHT_COLOR,
     },
     background: {
       dark: DARK_BACKGROUND_COLOR,
@@ -36,22 +35,22 @@ let muiTheme = createTheme({
     },
     grey: {
       dark: DARK_GREY_COLOR,
-      medium: MEDIUM_GREY_COLOR
+      medium: MEDIUM_GREY_COLOR,
     },
     pitch: {
       white: WHITE_COLOR,
-      black: BLACK_COLOR
+      black: BLACK_COLOR,
     },
     text: {
       primary: LIGHT_BACKGROUND_COLOR,
-      secondary: MEDIUM_GREY_COLOR
-    }
+      secondary: MEDIUM_GREY_COLOR,
+    },
   },
   typography: {
     fontFamily: "Plus Jakarta Sans, sans-serif",
     h6: {
       fontWeight: 600,
-    }
+    },
   },
   components: {
     MuiButton: {
@@ -60,7 +59,7 @@ let muiTheme = createTheme({
           color: WHITE_COLOR,
           fontWeight: 600,
           borderRadius: "24px",
-          textTransform: "capitalize"
+          textTransform: "capitalize",
         },
         containedPrimary: {
           backgroundColor: PRIMARY_COLOR,
@@ -73,14 +72,53 @@ let muiTheme = createTheme({
         containedError: {
           backgroundColor: DANGER_COLOR,
           ":hover": DANGER_LIGHT_COLOR,
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          "&.MuiInputBase-input-MuiOutlinedInput-input": {
+            padding: "12px 14px"
+          }
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          borderRadius: "6px",
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: `${MEDIUM_GREY_COLOR}70`,
+          },
+
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: PRIMARY_COLOR,
+          },
+
+          "& .MuiFormHelperText-root": {
+            marginLeft: 0,
+            fontWeight: 600
+          },
+
+          "& .MuiOutlinedInput-input": {
+            padding: "10px 14px"
+          }
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: WHITE_COLOR,
+          fontWeight: 600,
         }
       }
     }
-  }
+  },
 });
 
-
-muiTheme = responsiveFontSizes(muiTheme)
+muiTheme = responsiveFontSizes(muiTheme);
 
 const scTheme = {
   colors: {
@@ -90,7 +128,7 @@ const scTheme = {
     },
     danger: {
       main: DANGER_COLOR,
-      light: DANGER_LIGHT_COLOR
+      light: DANGER_LIGHT_COLOR,
     },
     background: {
       dark: DARK_BACKGROUND_COLOR,
@@ -98,19 +136,19 @@ const scTheme = {
     },
     pitch: {
       white: WHITE_COLOR,
-      black: BLACK_COLOR
+      black: BLACK_COLOR,
     },
     grey: {
       dark: DARK_GREY_COLOR,
-      medium: MEDIUM_GREY_COLOR
+      medium: MEDIUM_GREY_COLOR,
     },
     text: {
       primary: LIGHT_BACKGROUND_COLOR,
-      secondary: MEDIUM_GREY_COLOR
-    }
-  }
-}
+      secondary: MEDIUM_GREY_COLOR,
+    },
+  },
+};
 
 type ScThemeType = typeof scTheme;
 
-export {muiTheme, scTheme, ScThemeType}
+export { muiTheme, scTheme, ScThemeType };
