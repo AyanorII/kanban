@@ -4,6 +4,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useSelector } from "react-redux";
 import { useColumnsQuery } from "../../stores/api/columnsApi";
 import { RootState } from "../../stores/store";
+import AddColumn from "./AddColumn";
 import Column from "./Column";
 
 const ColumnsList = () => {
@@ -31,10 +32,11 @@ const ColumnsList = () => {
   }
 
   return (
-    <Stack flexDirection="row" gap={3}>
+    <Stack flexDirection="row" gap={3} sx={{ position: "relative" }}>
       {columns?.map((column) => (
         <Column key={column.id} column={column} />
       ))}
+      <AddColumn />
     </Stack>
   );
 };

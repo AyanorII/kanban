@@ -11,4 +11,4 @@ const boardsApi = apiSlice.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useBoardsQuery } = boardsApi
+export const { useBoardsQuery } = boardsApi;
