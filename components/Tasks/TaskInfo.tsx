@@ -3,32 +3,50 @@ import {
   Card,
   Checkbox as MuiCheckbox,
   IconButton,
+  InputLabel,
+  MenuItem,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useState } from "react";
-import { Subtask, Task } from "../../lib/types";
+import { useSelector } from "react-redux";
+import { Column, Subtask, Task } from "../../lib/types";
+import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import {
   useSubtasksQuery,
   useUpdateSubtaskMutation,
 } from "../../stores/api/subtasksApi";
-import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR, PRIMARY_LIGHT_COLOR } from '../../styles/theme';
-import Modal from "../Modal";
+import { useUpdateTaskMutation } from "../../stores/api/tasksApi";
+import { RootState } from "../../stores/store";
+import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
 
 type Props = {
   task: Task;
-  open: boolean;
   completedSubtasks: Subtask[];
-  handleClose: () => void;
 };
 
-const TaskInfo = ({ task, open, handleClose, completedSubtasks }: Props) => {
+const TaskInfo = ({ task, completedSubtasks }: Props) => {
   const { title, description } = task;
 
   const { data: subtasks, isLoading, error } = useSubtasksQuery(task);
+  const [updateTask] = useUpdateTaskMutation();
+
+  const currentBoard = useSelector(
+    (state: RootState) => state.boards.currentBoard
+  );
+
+  const { data: currentBoardColumns } = useBoardColumnsQuery(
+    currentBoard || skipToken
+  );
+
+  const currentStatus = currentBoardColumns?.find(
+    (column) => column.id === task.column_id
+  );
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <>
       <Stack
         flexDirection="row"
         justifyContent="space-between"
@@ -50,27 +68,55 @@ const TaskInfo = ({ task, open, handleClose, completedSubtasks }: Props) => {
       >
         {description}
       </Typography>
-      {subtasks && (
-        <>
-          <Typography variant="body1" mb={2} fontWeight={600}>
-            Subtasks ({completedSubtasks.length} of {subtasks.length})
-          </Typography>
-          <Stack gap={1.5}>
-            {/* Created a copy of subtasks to be able to sort it. Redux doesn't allow to mutate the state. */}
-            {[...subtasks]
-              .sort((a, b) => a.id - b.id)
-              .map((subtask) => (
-                <Checkbox
-                  key={subtask.id}
-                  subtask={subtask}
-                  subtasks={subtasks}
-                  completedSubtasks={completedSubtasks}
-                />
-              ))}
-          </Stack>
-        </>
-      )}
-    </Modal>
+      <Stack gap={3}>
+        {subtasks && (
+          <div>
+            <Typography variant="body1" mb={2} fontWeight={600}>
+              Subtasks ({completedSubtasks.length} of {subtasks.length})
+            </Typography>
+            <Stack gap={1.5}>
+              {/* Created a copy of subtasks to be able to sort it. Redux doesn't allow to mutate the state. */}
+              {[...subtasks]
+                .sort((a, b) => a.id - b.id)
+                .map((subtask) => (
+                  <Checkbox
+                    key={subtask.id}
+                    subtask={subtask}
+                    subtasks={subtasks}
+                    completedSubtasks={completedSubtasks}
+                  />
+                ))}
+            </Stack>
+          </div>
+        )}
+        <Stack gap={2}>
+          <InputLabel>Current Status</InputLabel>
+          <TextField
+            onChange={async (e) => {
+              const newStatus = e.target.value;
+              const response = await updateTask({
+                ...task,
+                status: newStatus,
+              });
+              console.log(response);
+            }}
+            select
+            fullWidth
+            defaultValue={currentStatus?.name}
+          >
+            {currentBoardColumns?.map((column: Column) => {
+              const { id, name } = column;
+
+              return (
+                <MenuItem key={id} value={name}>
+                  {name}
+                </MenuItem>
+              );
+            })}
+          </TextField>
+        </Stack>
+      </Stack>
+    </>
   );
 };
 
@@ -115,8 +161,9 @@ const Checkbox = ({ subtask, subtasks }: CheckboxProps) => {
           cursor: "pointer",
           transition: "all 0.2s ease-in-out",
           "&:hover": {
-            backgroundColor: `${PRIMARY_COLOR}80`
-        } }}
+            backgroundColor: `${PRIMARY_COLOR}80`,
+          },
+        }}
       >
         <MuiCheckbox checked={checked} sx={{ color: "white" }} />
         <Typography
