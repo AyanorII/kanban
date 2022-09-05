@@ -61,7 +61,6 @@ const EmptyBoard = () => {
       <Typography
         variant="h5"
         color="text.secondary"
-        fontWeight={600}
         textAlign="center"
         marginBottom={3}
       >

@@ -2,6 +2,7 @@ import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { ModalType } from "../../lib/types";
 import {
   AddColumnPayload,
   useAddColumnMutation,
@@ -36,7 +37,7 @@ const AddColumn = () => {
       }}
     >
       <Stack height="100%" justifyContent="center" alignItems="center">
-        <Typography variant="h5" color="text.secondary" fontWeight={600}>
+        <Typography variant="h5" color="text.secondary">
           + New Column
         </Typography>
       </Stack>
@@ -46,12 +47,7 @@ const AddColumn = () => {
 };
 export default AddColumn;
 
-type AddColumnModalProps = {
-  open: boolean;
-  onClose: () => void;
-};
-
-const AddColumnModal = ({ open, onClose }: AddColumnModalProps) => {
+const AddColumnModal = ({ open, onClose }: ModalType) => {
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
@@ -78,7 +74,7 @@ const AddColumnModal = ({ open, onClose }: AddColumnModalProps) => {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Typography variant="h5" fontWeight={600} mb={3}>
+      <Typography variant="h5" mb={3}>
         Add new column
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>

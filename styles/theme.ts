@@ -48,11 +48,15 @@ let muiTheme = createTheme({
   },
   typography: {
     fontFamily: "Plus Jakarta Sans, sans-serif",
+    h5: {
+      fontWeight: 600,
+    },
     h6: {
       fontWeight: 600,
     },
   },
   components: {
+    /* ------------------------------- Button ------------------------------- */
     MuiButton: {
       styleOverrides: {
         root: {
@@ -63,15 +67,22 @@ let muiTheme = createTheme({
         },
         containedPrimary: {
           backgroundColor: PRIMARY_COLOR,
-          ":hover": PRIMARY_LIGHT_COLOR,
+          "&:hover": {
+            backgroundColor: PRIMARY_LIGHT_COLOR,
+          },
         },
         containedSecondary: {
-          backgroundColor: "#1efeffa",
-          ":hover": "#d8d7f3",
+          backgroundColor: WHITE_COLOR,
+          color: PRIMARY_COLOR,
+          "&:hover": {
+            backgroundColor: WHITE_COLOR,
+          },
         },
         containedError: {
           backgroundColor: DANGER_COLOR,
-          ":hover": DANGER_LIGHT_COLOR,
+          "&:hover": {
+            backgroundColor: DANGER_LIGHT_COLOR,
+          },
         },
       },
     },
@@ -79,11 +90,17 @@ let muiTheme = createTheme({
       styleOverrides: {
         root: {
           "&.MuiInputBase-input-MuiOutlinedInput-input": {
-            padding: "12px 14px"
-          }
+            padding: "12px 14px",
+          },
+
+          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: `${DANGER_COLOR} !important`,
+          },
         },
       },
     },
+    /* ------------------------------- Button ------------------------------- */
+    /* ----------------------------- Text Field ----------------------------- */
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -98,23 +115,62 @@ let muiTheme = createTheme({
 
           "& .MuiFormHelperText-root": {
             marginLeft: 0,
-            fontWeight: 600
+            fontWeight: 600,
           },
 
-          "& .MuiOutlinedInput-input": {
-            padding: "10px 14px"
+          "& .MuiSelect-select.MuiSelect-outlined": {
+            fontWeight: 600,
+
+          },
+          
+          "& .MuiSelect-icon": {
+            color: MEDIUM_GREY_COLOR,
           }
         },
       },
     },
+    /* ----------------------------- Text Field ----------------------------- */
+    /* ----------------------------- Input Label ---------------------------- */
     MuiInputLabel: {
       styleOverrides: {
         root: {
           color: WHITE_COLOR,
           fontWeight: 600,
-        }
+        },
+      },
+    },
+    /* ----------------------------- Input Label ---------------------------- */
+    /* ----------------------------- Helper Text ---------------------------- */
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          "&.Mui-error": {
+            color: DANGER_COLOR,
+          },
+        },
+      },
+    },
+    /* ----------------------------- Helper Text ---------------------------- */
+    /* -------------------------------- Paper ------------------------------- */
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: DARK_BACKGROUND_COLOR,
+
+          "& .MuiMenuItem-root": {
+            fontWeight: 600,
+          },
+        },
+      },
+    },
+    /* -------------------------------- Paper ------------------------------- */
+    /* -------------------------------- Select ------------------------------ */
+    MuiSelect: {
+      styleOverrides: {
+
       }
     }
+    /* -------------------------------- Select ------------------------------ */
   },
 });
 

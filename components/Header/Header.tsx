@@ -59,7 +59,6 @@ const Header = () => {
           )}
           <Typography
             variant="h5"
-            fontWeight={600}
             letterSpacing="0.75px"
             color="text.primary"
             marginLeft="1rem"
