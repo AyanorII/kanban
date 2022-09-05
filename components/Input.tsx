@@ -1,5 +1,6 @@
 import { InputLabel, Stack, TextField } from "@mui/material";
 import { Control, Controller } from "react-hook-form";
+import { DANGER_COLOR, WHITE_COLOR } from "../styles/theme";
 
 type Props = {
   name: string;
@@ -8,13 +9,14 @@ type Props = {
   error: boolean;
   errorMessage?: string;
   control: Control<any>;
-  rules: {
+  rules?: {
     required: {
       value: boolean;
       message: string;
     };
   };
   placeholder?: string;
+  multiline?: boolean;
 };
 
 const Input = ({
@@ -26,6 +28,7 @@ const Input = ({
   control,
   rules,
   placeholder,
+  multiline,
 }: Props) => {
   return (
     <Controller
@@ -34,13 +37,19 @@ const Input = ({
       rules={rules}
       render={({ field }) => (
         <Stack gap={1}>
-          <InputLabel htmlFor={name}>{label}</InputLabel>
+          <InputLabel
+            htmlFor={name}
+            sx={{ color: error ? DANGER_COLOR : WHITE_COLOR }}
+          >
+            {label}
+          </InputLabel>
           <TextField
             {...field}
             type={type || "text"}
             error={error}
             helperText={errorMessage}
             placeholder={placeholder}
+            multiline={multiline || false}
           />
         </Stack>
       )}
