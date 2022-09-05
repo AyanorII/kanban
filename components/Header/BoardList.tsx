@@ -6,10 +6,12 @@ import {
   ListItemIcon,
   Typography,
 } from "@mui/material";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Board } from "../../lib/types";
 import { useBoardsQuery } from "../../stores/api/boardsApi";
+import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import { setCurrentBoard } from "../../stores/boardsSlice";
 import { RootState } from "../../stores/store";
 import { PRIMARY_COLOR, WHITE_COLOR } from "../../styles/theme";
@@ -23,11 +25,14 @@ const BoardList = () => {
     (state: RootState) => state.boards.currentBoard
   );
 
+  const { data: columns } = useBoardColumnsQuery(currentBoard || skipToken)
+
   const handleClick = (board: Board) => {
     dispatch(setCurrentBoard(board));
 
     if (window) {
       window.localStorage.setItem("currentBoard", JSON.stringify(board));
+      window.localStorage.setItem("columns", JSON.stringify(columns));
     }
   };
 
