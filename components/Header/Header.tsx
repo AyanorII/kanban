@@ -34,9 +34,11 @@ const AppBar = styled(MuiAppBar, {
 
 const Header = () => {
   const dispatch = useDispatch();
+
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
+  const columns = useSelector((state: RootState) => state.boards.columns);
   const open = useSelector((state: RootState) => state.nav.open);
 
   const toggleNavbar = () => {
@@ -67,7 +69,7 @@ const Header = () => {
           </Typography>
         </Stack>
         <Stack flexDirection="row" alignItems="center">
-          <AddTaskButton />
+          {columns.length > 1 && <AddTaskButton />}
           <IconButton>
             <MoreVertIcon sx={{ color: WHITE_COLOR }} />
           </IconButton>

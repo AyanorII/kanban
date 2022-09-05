@@ -48,6 +48,9 @@ let muiTheme = createTheme({
   },
   typography: {
     fontFamily: "Plus Jakarta Sans, sans-serif",
+    h4: {
+      fontWeight: 600,
+    },
     h5: {
       fontWeight: 600,
     },
@@ -120,12 +123,11 @@ let muiTheme = createTheme({
 
           "& .MuiSelect-select.MuiSelect-outlined": {
             fontWeight: 600,
-
           },
-          
+
           "& .MuiSelect-icon": {
             color: MEDIUM_GREY_COLOR,
-          }
+          },
         },
       },
     },
@@ -164,13 +166,6 @@ let muiTheme = createTheme({
       },
     },
     /* -------------------------------- Paper ------------------------------- */
-    /* -------------------------------- Select ------------------------------ */
-    MuiSelect: {
-      styleOverrides: {
-
-      }
-    }
-    /* -------------------------------- Select ------------------------------ */
   },
 });
 
