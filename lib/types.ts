@@ -16,19 +16,18 @@ export interface Task {
   title: string;
   description: string;
   subtasks?: Subtask[];
-  status: Status;
-  columnId: number
-}
-
-export enum Status {
-  Doing = "Doing",
-  Done = "Done",
-  Todo = "Todo",
+  status: string;
+  column_id: number;
 }
 
 export interface Subtask {
   id: number;
   title: string;
   completed: boolean;
-  taskId: number;
+  task: Task;
 }
+
+export type ModalType = {
+  open: boolean;
+  onClose: () => void;
+};

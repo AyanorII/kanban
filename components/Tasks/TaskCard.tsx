@@ -1,10 +1,11 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import { useState } from "react";
+import styled from "styled-components";
 import { Subtask, Task } from "../../lib/types";
 import { useSubtasksQuery } from "../../stores/api/subtasksApi";
 import { DARK_GREY_COLOR, PRIMARY_COLOR } from "../../styles/theme";
+import Modal from "../Modal";
 import TaskInfo from "./TaskInfo";
-import styled from 'styled-components';
 
 type Props = {
   task: Task;
@@ -28,41 +29,44 @@ const TaskCard = ({ task }: Props) => {
     subtasks?.filter((subtask: Subtask) => subtask.completed) || [];
 
   return (
-    <StyledCard
-      sx={{ bgcolor: DARK_GREY_COLOR, cursor: "pointer" }}
-      onClick={handleOpen}
-    >
-      <TaskInfo
-        task={task}
-        completedSubtasks={completedSubtasks}
-        open={open}
-        handleClose={handleClose}
-      />
-      <CardContent sx={{ padding: 3 }}>
-        <Typography
-          variant="body1"
-          color="text.primary"
-          fontWeight={600}
-          gutterBottom
-          className="task-card__title"
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant="body2"
-          marginBottom={0}
-          fontWeight={600}
-          color="text.secondary"
-        >
-          {!subtasks && isLoading && "Loading..."}
-          {subtasks &&
-            `${completedSubtasks.length} of ${subtasks.length} ${
-              subtasks!.length === 1 ? "subtask" : "subtasks"
-            } completed`}
-          {error && "Error :("}
-        </Typography>
-      </CardContent>
-    </StyledCard>
+    <>
+      <Modal open={open} onClose={handleClose}>
+        <TaskInfo task={task} completedSubtasks={completedSubtasks} />
+      </Modal>
+      <StyledCard
+        sx={{
+          bgcolor: DARK_GREY_COLOR,
+          cursor: "pointer",
+          position: "relative",
+        }}
+        onClick={handleOpen}
+      >
+        <CardContent sx={{ padding: 3 }}>
+          <Typography
+            variant="body1"
+            color="text.primary"
+            fontWeight={600}
+            gutterBottom
+            className="task-card__title"
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant="body2"
+            marginBottom={0}
+            fontWeight={600}
+            color="text.secondary"
+          >
+            {!subtasks && isLoading && "Loading..."}
+            {subtasks &&
+              `${completedSubtasks.length} of ${subtasks.length} ${
+                subtasks!.length === 1 ? "subtask" : "subtasks"
+              } completed`}
+            {error && "Error :("}
+          </Typography>
+        </CardContent>
+      </StyledCard>
+    </>
   );
 };
 
