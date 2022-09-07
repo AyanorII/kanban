@@ -57,6 +57,9 @@ let muiTheme = createTheme({
     h6: {
       fontWeight: 600,
     },
+    body1: {
+      fontWeight: 500,
+    }
   },
   components: {
     /* ------------------------------- Button ------------------------------- */
@@ -161,6 +164,7 @@ let muiTheme = createTheme({
 
           "& .MuiMenuItem-root": {
             fontWeight: 600,
+            color: MEDIUM_GREY_COLOR
           },
         },
       },
