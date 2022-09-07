@@ -1,15 +1,22 @@
-import { Box, Modal as MuiModal, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Modal as MuiModal,
+  SxProps,
+  Theme,
+  useMediaQuery,
+} from "@mui/material";
 import { ModalType } from "../lib/types";
 import { DARK_GREY_COLOR } from "../styles/theme";
 
 interface Props extends ModalType {
   children: React.ReactNode;
+  sx?: SxProps<Theme> | undefined;
 }
 
-const Modal = ({ children, open, onClose }: Props) => {
+const Modal = ({ children, open, onClose, sx }: Props) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  const style = {
+  const style: SxProps<Theme> = {
     backgroundColor: DARK_GREY_COLOR,
     position: "absolute" as "absolute",
     top: "50%",
@@ -20,7 +27,8 @@ const Modal = ({ children, open, onClose }: Props) => {
     boxShadow: 24,
     p: isMobile ? 2 : 4,
     maxHeight: "90vh",
-    overflow: "auto"
+    overflow: "auto",
+    ...sx,
   };
 
   return (
