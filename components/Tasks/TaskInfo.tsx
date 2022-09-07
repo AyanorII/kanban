@@ -20,7 +20,10 @@ import {
   useSubtasksQuery,
   useUpdateSubtaskMutation,
 } from "../../stores/api/subtasksApi";
-import { useUpdateTaskMutation } from "../../stores/api/tasksApi";
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "../../stores/api/tasksApi";
 import { RootState } from "../../stores/store";
 import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
 import Modal from "../Modal";
@@ -216,6 +219,7 @@ type MenuProps = {
 
 const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteTask, { isError, error}] = useDeleteTaskMutation();
 
   const handleDeleteModalOpen = () => {
     setIsDeleteModalOpen(true);
@@ -223,6 +227,17 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
 
   const handleDeleteModalClose = () => {
     setIsDeleteModalOpen(false);
+  };
+
+  const handleDeleteTask = async (task: Task) => {
+    const response = await deleteTask(task);
+
+    if (isError) {
+      console.error(error)
+    } else {
+      console.log(response)
+    }
+    handleDeleteModalClose();
   };
 
   return (
@@ -266,7 +281,15 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
           subtasks? This action cannot be reversed.
         </Typography>
         <Stack flexDirection="row" gap={2}>
-          <Button variant="contained" color="error" fullWidth size="large">
+          <Button
+            onClick={() => {
+              handleDeleteTask(task);
+            }}
+            variant="contained"
+            color="error"
+            fullWidth
+            size="large"
+          >
             Delete
           </Button>
           <Button
