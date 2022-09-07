@@ -13,7 +13,9 @@ type Props = {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const boardsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/boards`);
+  const boardsResponse = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/boards`
+  );
   const boards = boardsResponse.data;
 
   const columnsResponse = await axios.get(
@@ -41,15 +43,16 @@ const Home: NextPage<Props> = ({ boards, columns }) => {
       if (currentBoardInLocalStorage && columnsInLocalStorage) {
         const parsedCurrentBoard = JSON.parse(currentBoardInLocalStorage);
         const parsedColumns = JSON.parse(columnsInLocalStorage);
+
         dispatch(setCurrentBoard(parsedCurrentBoard));
         dispatch(setCurrentBoardColumn(parsedColumns));
       } else {
         dispatch(setCurrentBoard(boards[0]));
         dispatch(setCurrentBoardColumn(columns));
+
         window.localStorage.setItem("currentBoard", JSON.stringify(boards[0]));
         window.localStorage.setItem("columns", JSON.stringify(columns));
       }
-
       return () => {};
     }
   }, []);
