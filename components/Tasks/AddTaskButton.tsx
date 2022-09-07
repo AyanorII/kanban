@@ -12,7 +12,10 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { ModalType } from "../../lib/types";
+import { useSelector } from "react-redux";
+import { Column, ModalType } from "../../lib/types";
+import { useCreateTaskMutation } from "../../stores/api/tasksApi";
+import { RootState } from "../../stores/store";
 import { MEDIUM_GREY_COLOR } from "../../styles/theme";
 import Input from "../Input";
 import Modal from "../Modal";
@@ -61,13 +64,17 @@ export interface AddTaskPayload {
   description: string;
   status: string;
   subtasks: { title: string }[];
+  column_id: Column["id"];
 }
 
 const AddNewTaskModal = ({ open, onClose }: ModalType) => {
+  const columns = useSelector((state: RootState) => state.boards.columns);
+
   const defaultValues: AddTaskPayload = {
     title: "",
     description: "",
-    status: "",
+    status: columns[0].name,
+    column_id: columns[0].id,
     subtasks: [],
   };
 
@@ -84,8 +91,25 @@ const AddNewTaskModal = ({ open, onClose }: ModalType) => {
     name: "subtasks",
   });
 
-  const onSubmit = (data: AddTaskPayload) => {
-    console.log(data);
+  const [createTask, { isLoading, error }] = useCreateTaskMutation();
+
+  const onSubmit = async (data: AddTaskPayload) => {
+    const { status } = data;
+
+    const subtasks = data.subtasks.filter(
+      (subtask) => typeof subtask === "string"
+    ); // Remove empty subtasks
+
+    const column = columns.find((column) => column.name === status);
+
+    const payload: AddTaskPayload = {
+      ...data,
+      column_id: column!.id,
+      subtasks,
+    };
+
+    await createTask(payload);
+    onClose();
   };
 
   const SUBTASK_PLACEHOLDERS = [
@@ -97,12 +121,12 @@ const AddNewTaskModal = ({ open, onClose }: ModalType) => {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Typography variant="h5" mb={3}>
+      <Typography variant="h4" mb={3} mt={{ xs: 2, sm: 0 }}>
         Add New Task
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={3}>
-          {/* ---------------------------- TItle --------------------------- */}
+          {/* ---------------------------- Title --------------------------- */}
           <Input
             control={control}
             name="title"
@@ -114,7 +138,7 @@ const AddNewTaskModal = ({ open, onClose }: ModalType) => {
             error={Boolean(errors.title)}
             errorMessage={errors.title?.message}
           />
-          {/* ---------------------------- TItle --------------------------- */}
+          {/* ---------------------------- Title --------------------------- */}
           {/* ------------------------- Description ------------------------ */}
           <Input
             control={control}
@@ -140,12 +164,20 @@ const AddNewTaskModal = ({ open, onClose }: ModalType) => {
                       <TextField
                         {...controllerField}
                         fullWidth
-                        placeholder={`e.g. ${SUBTASK_PLACEHOLDERS[index]}`}
+                        placeholder={`e.g. ${
+                          SUBTASK_PLACEHOLDERS[
+                            index % SUBTASK_PLACEHOLDERS.length
+                          ]
+                        }`}
                         value={controllerField.value.title}
                       />
                     )}
                   />
-                  <IconButton aria-label="delete" onClick={() => remove(index)}>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => remove(index)}
+                    sx={{ paddingRight: 0 }}
+                  >
                     <CloseIcon sx={{ color: MEDIUM_GREY_COLOR }} />
                   </IconButton>
                 </Stack>
@@ -166,20 +198,41 @@ const AddNewTaskModal = ({ open, onClose }: ModalType) => {
             <Controller
               control={control}
               name="status"
+              defaultValue={defaultValues.status}
               rules={{
                 required: { value: true, message: "Status can't be blank" },
               }}
               render={({ field }) => (
-                <Select {...field} fullWidth>
-                  <MenuItem value="todo">Todo</MenuItem>
-                  <MenuItem value="doing">Doing</MenuItem>
-                  <MenuItem value="done">Done</MenuItem>
+                <Select
+                  {...field}
+                  fullWidth
+                  sx={{
+                    border: `1px solid ${MEDIUM_GREY_COLOR}70`,
+                    "& .MuiSelect-icon": {
+                      color: MEDIUM_GREY_COLOR,
+                    },
+                  }}
+                >
+                  {columns.map((column) => {
+                    const { id, name } = column;
+
+                    return (
+                      <MenuItem key={id} value={name}>
+                        {name}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
               )}
             />
           </Stack>
           {/* ---------------------------- Status -------------------------- */}
-          <Button variant="contained" color="primary" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            sx={{ mb: { xs: 2, sm: 0 } }}
+          >
             Create Task
           </Button>
         </Stack>

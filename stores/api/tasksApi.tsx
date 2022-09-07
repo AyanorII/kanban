@@ -22,20 +22,24 @@ const tasksApi = apiSlice.injectEndpoints({
     }),
     createTask: builder.mutation<Task, AddTaskPayload>({
       query: (task) => {
-        const { title, description, subtasks } = task;
+        const subtasks = task.subtasks.map((subtask) => ({ title: subtask }));
+
+        const payload = {
+          ...task,
+          subtasks,
+        };
 
         return {
           url: "/tasks",
           method: "POST",
-          body: {
-            title,
-            description,
-          },
+          body: { task: payload },
         };
       },
+      invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useTasksQuery, useUpdateTaskMutation } = tasksApi;
+export const { useTasksQuery, useUpdateTaskMutation, useCreateTaskMutation } =
+  tasksApi;
