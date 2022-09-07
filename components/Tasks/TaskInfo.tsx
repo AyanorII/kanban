@@ -1,9 +1,11 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
+  Button,
   Card,
   Checkbox as MuiCheckbox,
   IconButton,
   InputLabel,
+  Menu as MuiMenu,
   MenuItem,
   Stack,
   TextField,
@@ -21,6 +23,7 @@ import {
 import { useUpdateTaskMutation } from "../../stores/api/tasksApi";
 import { RootState } from "../../stores/store";
 import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
+import Modal from "../Modal";
 
 type Props = {
   task: Task;
@@ -28,6 +31,16 @@ type Props = {
 };
 
 const TaskInfo = ({ task, completedSubtasks }: Props) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const { title, description } = task;
 
   const { data: subtasks, isLoading, error } = useSubtasksQuery(task);
@@ -47,6 +60,7 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
 
   return (
     <>
+      {/* ----------------------------- Header ----------------------------- */}
       <Stack
         flexDirection="row"
         justifyContent="space-between"
@@ -55,10 +69,18 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
         <Typography variant="h6" mb={2}>
           {title}
         </Typography>
-        <IconButton>
+        <IconButton onClick={handleMenu} sx={{ paddingRight: 0 }}>
           <MoreVertIcon sx={{ color: "text.secondary" }} />
         </IconButton>
+        <Menu
+          open={isMenuOpen}
+          handleClose={handleClose}
+          anchorEl={anchorEl}
+          task={task}
+        />
       </Stack>
+      {/* ----------------------------- Header ----------------------------- */}
+      {/*---------------------------- Description -------------------------- */}
       <Typography
         variant="body2"
         color="text.secondary"
@@ -68,7 +90,9 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
       >
         {description}
       </Typography>
+      {/*---------------------------- Description -------------------------- */}
       <Stack gap={3}>
+        {/* --------------------------- Subtasks --------------------------- */}
         {subtasks && (
           <div>
             <Typography variant="body1" mb={2} fontWeight={600}>
@@ -89,6 +113,8 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
             </Stack>
           </div>
         )}
+        {/* --------------------------- Subtasks --------------------------- */}
+        {/* ------------------------ Current Status ------------------------ */}
         <Stack gap={2}>
           <InputLabel>Current Status</InputLabel>
           <TextField
@@ -98,7 +124,6 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
                 ...task,
                 status: newStatus,
               });
-              console.log(response);
             }}
             select
             fullWidth
@@ -115,6 +140,7 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
             })}
           </TextField>
         </Stack>
+        {/* ------------------------ Current Status ------------------------ */}
       </Stack>
     </>
   );
@@ -178,5 +204,82 @@ const Checkbox = ({ subtask, subtasks }: CheckboxProps) => {
         </Typography>
       </Stack>
     </Card>
+  );
+};
+
+type MenuProps = {
+  open: boolean;
+  handleClose: () => void;
+  anchorEl: null | HTMLElement;
+  task: Task;
+};
+
+const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleDeleteModalOpen = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsDeleteModalOpen(false);
+  };
+
+  return (
+    <>
+      <MuiMenu
+        id="task-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+          sx: { width: "150px" },
+        }}
+      >
+        <MenuItem onClick={handleClose}>
+          <Typography paragraph fontWeight={600} color="text.secondary" mb={0}>
+            Edit Task
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            handleDeleteModalOpen();
+          }}
+        >
+          <Typography paragraph fontWeight={600} color="error" mb={0}>
+            Delete Task
+          </Typography>
+        </MenuItem>
+      </MuiMenu>
+      <Modal
+        open={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
+        sx={{ width: { xs: "85vw", sm: 400, md: 600 } }}
+      >
+        <Typography variant="h5" color="error" fontWeight={700} mb={3}>
+          Delete this task?
+        </Typography>
+        <Typography paragraph color="text.secondary" mb={3}>
+          Are you sure you want to delete the &apos;{task.title}&apos; and its
+          subtasks? This action cannot be reversed.
+        </Typography>
+        <Stack flexDirection="row" gap={2}>
+          <Button variant="contained" color="error" fullWidth size="large">
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleDeleteModalClose}
+            fullWidth
+            size="large"
+          >
+            Cancel
+          </Button>
+        </Stack>
+      </Modal>
+    </>
   );
 };
