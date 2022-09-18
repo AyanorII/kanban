@@ -25,7 +25,7 @@ const Column = ({ column }: Props) => {
           />
           <Stack gap={3}>
             {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
+              <TaskCard key={task.id} task={task} column={column}/>
             ))}
           </Stack>
         </>

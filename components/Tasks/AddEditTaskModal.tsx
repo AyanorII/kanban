@@ -13,7 +13,7 @@ import {
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { ModalType, Task, TaskPayload } from "../../lib/types";
+import { Column, ModalType, Task, TaskPayload } from "../../lib/types";
 import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import {
   useDeleteSubtaskMutation,
@@ -83,7 +83,7 @@ const AddEditTaskModal = ({ open, onClose, task }: Props) => {
   const onSubmit = async (data: TaskPayload) => {
     const isEditingTask = Boolean(task);
     const { status } = data;
-    const column = columns!.find((column) => column.name === status);
+    const column = columns!.find((column: Column) => column.name === status);
 
     let subtasks: any = data.subtasks;
 

@@ -7,7 +7,7 @@ const tasksApi = apiSlice.injectEndpoints({
       query: (column: Column) => `/columns/${column.id}/tasks`,
       providesTags: ["Tasks"],
     }),
-    updateTask: builder.mutation<Task, any>({
+    updateTask: builder.mutation<Task, TaskPayload>({
       query: (task) => {
         const { id } = task;
 
@@ -19,18 +19,24 @@ const tasksApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
-    createTask: builder.mutation<Task, TaskPayload>({
+    updateTaskStatus: builder.mutation<Task, Task>({
       query: (task) => {
-        const payload = {
-          ...task,
-        };
+        const { id } = task;
 
         return {
-          url: "/tasks",
-          method: "POST",
+          url: `/tasks/${id}/status`,
+          method: "PATCH",
           body: task,
         };
       },
+      invalidatesTags: ["Boards", "Columns", "Tasks"],
+    }),
+    createTask: builder.mutation<Task, TaskPayload>({
+      query: (task) => ({
+        url: "/tasks",
+        method: "POST",
+        body: task,
+      }),
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
     deleteTask: builder.mutation<Task, any>({
@@ -51,6 +57,7 @@ const tasksApi = apiSlice.injectEndpoints({
 export const {
   useTasksQuery,
   useUpdateTaskMutation,
+  useUpdateTaskStatusMutation,
   useCreateTaskMutation,
   useDeleteTaskMutation,
 } = tasksApi;

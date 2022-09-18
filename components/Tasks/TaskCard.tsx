@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import { useState } from "react";
 import styled from "styled-components";
-import { Subtask, Task } from "../../lib/types";
+import { Column, Subtask, Task } from "../../lib/types";
 import { useSubtasksQuery } from "../../stores/api/subtasksApi";
 import { DARK_GREY_COLOR, PRIMARY_COLOR } from "../../styles/theme";
 import Modal from "../Modal";
@@ -9,9 +9,10 @@ import TaskInfo from "./TaskInfo";
 
 type Props = {
   task: Task;
+  column: Column;
 };
 
-const TaskCard = ({ task }: Props) => {
+const TaskCard = ({ task, column }: Props) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -31,7 +32,11 @@ const TaskCard = ({ task }: Props) => {
   return (
     <>
       <Modal open={open} onClose={handleClose}>
-        <TaskInfo task={task} completedSubtasks={completedSubtasks} />
+        <TaskInfo
+          task={task}
+          completedSubtasks={completedSubtasks}
+          column={column}
+        />
       </Modal>
       <StyledCard
         sx={{

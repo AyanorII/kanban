@@ -22,7 +22,7 @@ import {
 } from "../../stores/api/subtasksApi";
 import {
   useDeleteTaskMutation,
-  useUpdateTaskMutation,
+  useUpdateTaskStatusMutation,
 } from "../../stores/api/tasksApi";
 import { RootState } from "../../stores/store";
 import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
@@ -32,9 +32,10 @@ import AddEditTaskModal from "./AddEditTaskModal";
 type Props = {
   task: Task;
   completedSubtasks: Subtask[];
+  column: Column;
 };
 
-const TaskInfo = ({ task, completedSubtasks }: Props) => {
+const TaskInfo = ({ task, completedSubtasks, column }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -45,10 +46,10 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
     setAnchorEl(null);
   };
 
-  const { title, description } = task;
+  const { title, description, columnId } = task;
 
   const { data: subtasks, isLoading, error } = useSubtasksQuery(task);
-  const [updateTask] = useUpdateTaskMutation();
+  const [updateTask] = useUpdateTaskStatusMutation();
 
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
@@ -117,10 +118,13 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
           <InputLabel>Current Status</InputLabel>
           <TextField
             onChange={async (e) => {
-              const newStatus = e.target.value;
+              const newStatus = columns?.find(
+                (column) => column.name === e.target.value
+              );
               const response = await updateTask({
                 ...task,
-                status: newStatus,
+                status: newStatus!.name,
+                columnId: newStatus!.id,
               });
             }}
             select
