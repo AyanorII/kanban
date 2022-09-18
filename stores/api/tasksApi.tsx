@@ -1,5 +1,4 @@
-import { AddTaskPayload } from "../../components/Tasks/AddTaskButton";
-import { Column, Task } from "../../lib/types";
+import { Column, Task, TaskPayload } from "../../lib/types";
 import { apiSlice } from "../apiSlice";
 
 const tasksApi = apiSlice.injectEndpoints({
@@ -8,31 +7,28 @@ const tasksApi = apiSlice.injectEndpoints({
       query: (column: Column) => `/columns/${column.id}/tasks`,
       providesTags: ["Tasks"],
     }),
-    updateTask: builder.mutation<Task, Task>({
+    updateTask: builder.mutation<Task, any>({
       query: (task) => {
-        const { id, title, description, column_id, status } = task;
+        const { id } = task;
 
         return {
           url: `/tasks/${id}`,
           method: "PATCH",
-          body: { title, description, column_id, status },
+          body: task,
         };
       },
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
-    createTask: builder.mutation<Task, AddTaskPayload>({
+    createTask: builder.mutation<Task, TaskPayload>({
       query: (task) => {
-        const subtasks = task.subtasks.map((subtask) => ({ title: subtask }));
-
         const payload = {
           ...task,
-          subtasks,
         };
 
         return {
           url: "/tasks",
           method: "POST",
-          body: { task: payload },
+          body: task,
         };
       },
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],

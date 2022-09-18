@@ -4,12 +4,12 @@ import { Board, Column } from "../lib/types";
 
 type BoardState = {
   currentBoard: Board | null;
-  columns: Column[];
+  // columns: Column[];
 };
 
 const initialState: BoardState = {
   currentBoard: null,
-  columns: [],
+  // columns: [],
 };
 
 export const boardsSlice = createSlice({

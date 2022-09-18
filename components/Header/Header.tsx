@@ -2,8 +2,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
+import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import { toggleNav } from "../../stores/navSlice";
 import { RootState } from "../../stores/store";
 import { DARK_GREY_COLOR, WHITE_COLOR } from "../../styles/theme";
@@ -38,7 +40,9 @@ const Header = () => {
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
-  const columns = useSelector((state: RootState) => state.boards.columns);
+
+  const { data: columns, isLoading } = useBoardColumnsQuery(currentBoard || skipToken);
+
   const open = useSelector((state: RootState) => state.nav.open);
 
   const toggleNavbar = () => {
@@ -69,7 +73,8 @@ const Header = () => {
           </Typography>
         </Stack>
         <Stack flexDirection="row" alignItems="center">
-          {columns.length > 1 && <AddTaskButton />}
+          {/* {columns && columns.length > 1 && <AddTaskButton />} */}
+          <AddTaskButton />
           <IconButton>
             <MoreVertIcon sx={{ color: WHITE_COLOR }} />
           </IconButton>

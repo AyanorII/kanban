@@ -2,7 +2,7 @@ import { Button, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useSelector } from "react-redux";
-import { useColumnsQuery } from "../../stores/api/columnsApi";
+import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import { RootState } from "../../stores/store";
 import AddColumn from "./AddColumn";
 import Column from "./Column";
@@ -12,23 +12,10 @@ const ColumnsList = () => {
     (state: RootState) => state.boards.currentBoard
   );
 
-  const {
-    data: columns,
-    isLoading,
-    error,
-    isError,
-  } = useColumnsQuery(currentBoard ?? skipToken);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { data: columns } = useBoardColumnsQuery(currentBoard || skipToken);
 
   if (columns && columns.length === 0) {
     return <EmptyBoard />;
-  }
-
-  if (error) {
-    return <>Error</>;
   }
 
   return (
@@ -45,11 +32,7 @@ export default ColumnsList;
 
 const AddColumnButton = () => {
   return (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={() => console.log("Clicked")}
-    >
+    <Button variant="contained" color="primary">
       + Add new column
     </Button>
   );

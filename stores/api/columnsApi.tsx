@@ -8,12 +8,9 @@ export type AddColumnPayload = {
 
 const columnsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    columns: builder.query<Column[], Board>({
-      query: (board) => `/boards/${board.id}/columns`,
-      providesTags: ["Columns"],
-    }),
     boardColumns: builder.query<Column[], Board>({
       query: (board) => `/boards/${board.id}/columns`,
+      providesTags: ["Columns"],
     }),
     addColumn: builder.mutation({
       query: ({ board, name }: AddColumnPayload) => ({
@@ -27,5 +24,5 @@ const columnsApi = apiSlice.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useColumnsQuery, useBoardColumnsQuery, useAddColumnMutation } =
+export const { useBoardColumnsQuery, useAddColumnMutation } =
   columnsApi;

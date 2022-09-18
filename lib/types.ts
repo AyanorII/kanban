@@ -17,17 +17,30 @@ export interface Task {
   description: string;
   subtasks?: Subtask[];
   status: string;
-  column_id: number;
+  columnId: number;
 }
 
 export interface Subtask {
   id: number;
   title: string;
   completed: boolean;
-  task: Task;
+  taskId: number;
 }
 
 export type ModalType = {
   open: boolean;
   onClose: () => void;
 };
+
+export interface TaskPayload {
+  id?: number | undefined;
+  title: string;
+  description: string;
+  status: string;
+  subtasks?: {
+    title: string;
+    id: number | undefined;
+    taskId: number | undefined;
+  }[];
+  columnId: Column["id"];
+}

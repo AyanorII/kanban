@@ -4,54 +4,51 @@ import type { GetStaticProps, NextPage } from "next";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import ColumnsList from "../components/Columns/ColumnsList";
-import { Board, Column } from "../lib/types";
-import { setCurrentBoard, setCurrentBoardColumn } from "../stores/boardsSlice";
+import { Board } from "../lib/types";
+import { setCurrentBoard } from "../stores/boardsSlice";
 
 type Props = {
-  boards: Board[];
-  columns: Column[];
+  currentBoard: Board;
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const boardsResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/boards`
-  );
-  const boards = boardsResponse.data;
+  const boardsApiUrl = `${process.env.NEXT_PUBLIC_API_URL}/boards`;
 
-  const columnsResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/boards/${boards[0].id}/columns`
+  const boardsResponse = await axios.get(boardsApiUrl);
+  const boards = boardsResponse.data as Board[];
+  const firstBoard = boards[0];
+
+  const firstBoardResponse = await axios.get(
+    boardsApiUrl + `/${firstBoard.id}`
   );
-  const columns = columnsResponse.data;
+
+  const currentBoard = firstBoardResponse.data;
 
   return {
     props: {
-      boards,
-      columns,
+      currentBoard,
     },
   };
 };
 
-const Home: NextPage<Props> = ({ boards, columns }) => {
+const Home: NextPage<Props> = ({ currentBoard }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (window) {
       const currentBoardInLocalStorage =
         window.localStorage.getItem("currentBoard");
-      const columnsInLocalStorage = window.localStorage.getItem("columns");
 
-      if (currentBoardInLocalStorage && columnsInLocalStorage) {
+      if (currentBoardInLocalStorage) {
         const parsedCurrentBoard = JSON.parse(currentBoardInLocalStorage);
-        const parsedColumns = JSON.parse(columnsInLocalStorage);
-
         dispatch(setCurrentBoard(parsedCurrentBoard));
-        dispatch(setCurrentBoardColumn(parsedColumns));
       } else {
-        dispatch(setCurrentBoard(boards[0]));
-        dispatch(setCurrentBoardColumn(columns));
+        dispatch(setCurrentBoard(currentBoard));
 
-        window.localStorage.setItem("currentBoard", JSON.stringify(boards[0]));
-        window.localStorage.setItem("columns", JSON.stringify(columns));
+        window.localStorage.setItem(
+          "currentBoard",
+          JSON.stringify(currentBoard)
+        );
       }
       return () => {};
     }

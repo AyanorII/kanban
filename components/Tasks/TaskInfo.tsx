@@ -18,7 +18,7 @@ import { Column, Subtask, Task } from "../../lib/types";
 import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import {
   useSubtasksQuery,
-  useUpdateSubtaskMutation,
+  useUpdateSubtaskCompletedMutation,
 } from "../../stores/api/subtasksApi";
 import {
   useDeleteTaskMutation,
@@ -27,6 +27,7 @@ import {
 import { RootState } from "../../stores/store";
 import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
 import Modal from "../Modal";
+import AddEditTaskModal from "./AddEditTaskModal";
 
 type Props = {
   task: Task;
@@ -53,13 +54,7 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
     (state: RootState) => state.boards.currentBoard
   );
 
-  const { data: currentBoardColumns } = useBoardColumnsQuery(
-    currentBoard || skipToken
-  );
-
-  const currentStatus = currentBoardColumns?.find(
-    (column) => column.id === task.column_id
-  );
+  const { data: columns } = useBoardColumnsQuery(currentBoard || skipToken);
 
   return (
     <>
@@ -130,9 +125,9 @@ const TaskInfo = ({ task, completedSubtasks }: Props) => {
             }}
             select
             fullWidth
-            defaultValue={currentStatus?.name}
+            defaultValue={task.status}
           >
-            {currentBoardColumns?.map((column: Column) => {
+            {columns?.map((column: Column) => {
               const { id, name } = column;
 
               return (
@@ -161,7 +156,7 @@ const Checkbox = ({ subtask, subtasks }: CheckboxProps) => {
   const { completed, title } = subtask;
   const [checked, setChecked] = useState(completed);
 
-  const [updateSubtask] = useUpdateSubtaskMutation();
+  const [updateSubtask] = useUpdateSubtaskCompletedMutation();
 
   const handleClick = async () => {
     setChecked(!checked);
@@ -219,29 +214,53 @@ type MenuProps = {
 
 const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deleteTask, { isError, error}] = useDeleteTaskMutation();
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [deleteTask, { isError, error }] = useDeleteTaskMutation();
 
-  const handleDeleteModalOpen = () => {
+  const handleOpenDeleteModal = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleDeleteModalClose = () => {
+  const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
+  };
+
+  const handleOpenEditTaskModal = () => {
+    setIsEditTaskModalOpen(true);
+  };
+
+  const handleCloseEditTaskModal = () => {
+    setIsEditTaskModalOpen(false);
   };
 
   const handleDeleteTask = async (task: Task) => {
     const response = await deleteTask(task);
 
     if (isError) {
-      console.error(error)
+      console.error(error);
     } else {
-      console.log(response)
+      console.log(response);
     }
-    handleDeleteModalClose();
+    handleCloseDeleteModal();
+  };
+
+  const handleClickEdit = () => {
+    handleClose();
+    handleOpenEditTaskModal();
+  };
+
+  const handleClickDelete = () => {
+    handleClose();
+    handleOpenDeleteModal();
   };
 
   return (
     <>
+      <AddEditTaskModal
+        open={isEditTaskModalOpen}
+        onClose={handleCloseEditTaskModal}
+        task={task}
+      />
       <MuiMenu
         id="task-menu"
         anchorEl={anchorEl}
@@ -252,17 +271,12 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
           sx: { width: "150px" },
         }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClickEdit}>
           <Typography paragraph fontWeight={600} color="text.secondary" mb={0}>
             Edit Task
           </Typography>
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            handleDeleteModalOpen();
-          }}
-        >
+        <MenuItem onClick={handleClickDelete}>
           <Typography paragraph fontWeight={600} color="error" mb={0}>
             Delete Task
           </Typography>
@@ -270,7 +284,7 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
       </MuiMenu>
       <Modal
         open={isDeleteModalOpen}
-        onClose={handleDeleteModalClose}
+        onClose={handleCloseDeleteModal}
         sx={{ width: { xs: "85vw", sm: 400, md: 600 } }}
       >
         <Typography variant="h5" color="error" fontWeight={700} mb={3}>
@@ -295,7 +309,7 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={handleDeleteModalClose}
+            onClick={handleCloseDeleteModal}
             fullWidth
             size="large"
           >

@@ -13,10 +13,30 @@ export const subtasksApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: subtask,
       }),
-      invalidatesTags: ["Subtasks"],
+      invalidatesTags: ["Tasks", "Subtasks"],
+    }),
+    updateSubtaskCompleted: builder.mutation<Subtask, Subtask>({
+      query: (subtask) => ({
+        url: `/subtasks/${subtask.id}/completed`,
+        method: "PATCH",
+        body: subtask,
+      }),
+      invalidatesTags: ["Columns", "Tasks", "Subtasks" ]
+    }),
+    deleteSubtask: builder.mutation<void, Subtask | number>({
+      query: (subtask) => ({
+        url: `/subtasks/${typeof subtask === "number" ? subtask : subtask.id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Tasks", "Subtasks"],
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useSubtasksQuery, useUpdateSubtaskMutation } = subtasksApi;
+export const {
+  useSubtasksQuery,
+  useUpdateSubtaskMutation,
+  useDeleteSubtaskMutation,
+  useUpdateSubtaskCompletedMutation,
+} = subtasksApi;

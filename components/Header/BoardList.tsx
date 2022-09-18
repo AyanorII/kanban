@@ -6,30 +6,22 @@ import {
   ListItemIcon,
   Typography,
 } from "@mui/material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Board } from "../../lib/types";
 import { useBoardsQuery } from "../../stores/api/boardsApi";
-import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
-import {
-  setCurrentBoard,
-  setCurrentBoardColumn,
-} from "../../stores/boardsSlice";
+import { setCurrentBoard } from "../../stores/boardsSlice";
 import { RootState } from "../../stores/store";
 import { PRIMARY_COLOR, WHITE_COLOR } from "../../styles/theme";
 
 const BoardList = () => {
   const dispatch = useDispatch();
 
-  const { data: boards, isLoading, error } = useBoardsQuery();
+  const { data: boards } = useBoardsQuery();
 
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
-
-  const { data: columns } = useBoardColumnsQuery(currentBoard || skipToken);
 
   const handleClick = (board: Board) => {
     if (window) {
@@ -39,41 +31,30 @@ const BoardList = () => {
     dispatch(setCurrentBoard(board));
   };
 
-  useEffect(() => {
-    if (columns) {
-      dispatch(setCurrentBoardColumn(columns!));
-    }
-
-    if (window && columns) {
-      window.localStorage.setItem("columns", JSON.stringify(columns));
-    }
-  }, [currentBoard, columns]);
-
   return (
     <List>
-      {columns &&
-        boards?.map((board: Board) => (
-          <StyledListItem
-            key={board.id}
-            onClick={() => handleClick(board)}
-            disablePadding
-            sx={{ position: "relative" }}
-            className={currentBoard?.id === board.id ? "active" : ""}
-          >
-            <ListItemButton disableRipple>
-              <DashboardIcon active={currentBoard?.id === board.id} />
-              <Typography
-                variant="body1"
-                fontWeight={600}
-                color={
-                  currentBoard?.id === board.id ? WHITE_COLOR : "text.secondary"
-                }
-              >
-                {board.name}
-              </Typography>
-            </ListItemButton>
-          </StyledListItem>
-        ))}
+      {boards?.map((board: Board) => (
+        <StyledListItem
+          key={board.id}
+          onClick={() => handleClick(board)}
+          disablePadding
+          sx={{ position: "relative" }}
+          className={currentBoard?.id === board.id ? "active" : ""}
+        >
+          <ListItemButton disableRipple>
+            <DashboardIcon active={currentBoard?.id === board.id} />
+            <Typography
+              variant="body1"
+              fontWeight={600}
+              color={
+                currentBoard?.id === board.id ? WHITE_COLOR : "text.secondary"
+              }
+            >
+              {board.name}
+            </Typography>
+          </ListItemButton>
+        </StyledListItem>
+      ))}
       <ListItem sx={{ paddingLeft: 0 }}>
         <ListItemButton disableRipple>
           <DashboardIcon />
