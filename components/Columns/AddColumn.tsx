@@ -1,5 +1,5 @@
 import { Button, Paper, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { ModalType } from "../../lib/types";
@@ -27,22 +27,24 @@ const AddColumn = () => {
   };
 
   return (
-    <Paper
-      onClick={handleOpen}
-      sx={{
-        bgcolor: DARK_GREY_COLOR,
-        width: COLUMN_WIDTH,
-        marginTop: "48px",
-        cursor: "pointer",
-      }}
-    >
-      <Stack height="100%" justifyContent="center" alignItems="center">
-        <Typography variant="h5" color="text.secondary">
-          + New Column
-        </Typography>
-      </Stack>
+    <>
+      <Paper
+        onClick={handleOpen}
+        sx={{
+          bgcolor: DARK_GREY_COLOR,
+          width: COLUMN_WIDTH,
+          marginTop: "48px",
+          cursor: "pointer",
+        }}
+      >
+        <Stack height="100%" justifyContent="center" alignItems="center">
+          <Typography variant="h5" color="text.secondary">
+            + New Column
+          </Typography>
+        </Stack>
+      </Paper>
       <AddColumnModal open={open} onClose={handleClose} />
-    </Paper>
+    </>
   );
 };
 export default AddColumn;
@@ -54,20 +56,27 @@ const AddColumnModal = ({ open, onClose }: ModalType) => {
 
   const defaultValues: AddColumnPayload = {
     name: "",
-    board: currentBoard!,
+    boardId: currentBoard?.id || 0,
   };
 
   const {
     control,
     formState: { errors },
     handleSubmit,
+    setValue,
   } = useForm({
     defaultValues,
   });
 
+  useEffect(() => {
+    currentBoard && setValue("boardId", currentBoard.id);
+  }, [currentBoard]);
+
   const [addColumn, { error, isLoading }] = useAddColumnMutation();
 
   const onSubmit = async (data: AddColumnPayload) => {
+    console.log(data);
+
     await addColumn(data);
     onClose();
   };
@@ -77,27 +86,29 @@ const AddColumnModal = ({ open, onClose }: ModalType) => {
       <Typography variant="h5" mb={3}>
         Add new column
       </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack gap={2}>
-          <Input
-            control={control}
-            name="name"
-            label="Column name"
-            error={Boolean(errors.name)}
-            errorMessage={errors.name?.message}
-            placeholder="Urgent tasks"
-            rules={{
-              required: {
-                value: true,
-                message: "Column name can't be blank",
-              },
-            }}
-          />
-          <Button type="submit" variant="contained" color="primary">
-            Add column
-          </Button>
-        </Stack>
-      </form>
+      {currentBoard && (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack gap={2}>
+            <Input
+              control={control}
+              name="name"
+              label="Column name"
+              error={Boolean(errors.name)}
+              errorMessage={errors.name?.message}
+              placeholder="Urgent tasks"
+              rules={{
+                required: {
+                  value: true,
+                  message: "Column name can't be blank",
+                },
+              }}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Add column
+            </Button>
+          </Stack>
+        </form>
+      )}
     </Modal>
   );
 };

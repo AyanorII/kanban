@@ -2,7 +2,7 @@ import { Board, Column } from "../../lib/types";
 import { apiSlice } from "../apiSlice";
 
 export type AddColumnPayload = {
-  board: Board;
+  boardId: number;
   name: string;
 };
 
@@ -13,10 +13,10 @@ const columnsApi = apiSlice.injectEndpoints({
       providesTags: ["Columns"],
     }),
     addColumn: builder.mutation({
-      query: ({ board, name }: AddColumnPayload) => ({
+      query: (payload: AddColumnPayload) => ({
         url: "/columns",
         method: "POST",
-        body: { column: { board_id: board.id, name } },
+        body: payload,
       }),
       invalidatesTags: ["Columns"],
     }),
@@ -24,5 +24,4 @@ const columnsApi = apiSlice.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useBoardColumnsQuery, useAddColumnMutation } =
-  columnsApi;
+export const { useBoardColumnsQuery, useAddColumnMutation } = columnsApi;

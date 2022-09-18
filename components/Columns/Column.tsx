@@ -20,6 +20,7 @@ const Column = ({ column }: Props) => {
         <>
           <ColumnName
             name={column.name.toLowerCase()}
+            color={column.color}
             tasksNumber={tasks.length}
           />
           <Stack gap={3}>
