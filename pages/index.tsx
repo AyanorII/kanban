@@ -44,11 +44,6 @@ const Home: NextPage<Props> = ({ currentBoard }) => {
         dispatch(setCurrentBoard(parsedCurrentBoard));
       } else {
         dispatch(setCurrentBoard(currentBoard));
-
-        window.localStorage.setItem(
-          "currentBoard",
-          JSON.stringify(currentBoard)
-        );
       }
       return () => {};
     }

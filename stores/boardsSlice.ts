@@ -15,6 +15,10 @@ export const boardsSlice = createSlice({
   initialState,
   reducers: {
     setCurrentBoard(state, action: PayloadAction<Board | null>) {
+      window.localStorage.setItem(
+        "currentBoard",
+        JSON.stringify(action.payload)
+      );
       return {
         ...state,
         currentBoard: action.payload,
@@ -25,7 +29,7 @@ export const boardsSlice = createSlice({
         ...state,
         columns: action.payload,
       };
-    }
+    },
   },
 });
 

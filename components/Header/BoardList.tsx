@@ -34,10 +34,6 @@ const BoardList = () => {
   );
 
   const handleClick = (board: Board) => {
-    if (window) {
-      window.localStorage.setItem("currentBoard", JSON.stringify(board));
-    }
-
     dispatch(setCurrentBoard(board));
   };
 
