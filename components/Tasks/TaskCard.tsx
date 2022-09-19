@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Column, Subtask, Task } from "../../lib/types";
 import { useSubtasksQuery } from "../../stores/api/subtasksApi";
 import { DARK_GREY_COLOR, PRIMARY_COLOR } from "../../styles/theme";
-import Modal from "../Modal";
+import Modal from "../Modal/Modal";
 import TaskInfo from "./TaskInfo";
 
 type Props = {

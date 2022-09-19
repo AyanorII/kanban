@@ -10,7 +10,7 @@ import {
 import { RootState } from "../../stores/store";
 import { DARK_GREY_COLOR } from "../../styles/theme";
 import Input from "../Input";
-import Modal from "../Modal";
+import Modal from "../Modal/Modal";
 import { COLUMN_WIDTH } from "./Column";
 
 type Props = {};

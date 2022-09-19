@@ -26,7 +26,7 @@ import {
 import { RootState } from "../../stores/store";
 import { MEDIUM_GREY_COLOR } from "../../styles/theme";
 import Input from "../Input";
-import Modal from "../Modal";
+import Modal from "../Modal/Modal";
 
 type Props = {
   task?: Task;
@@ -95,7 +95,7 @@ const AddEditTaskModal = ({ open, onClose, task }: Props) => {
 
     const payload: TaskPayload = {
       ...data,
-      columnId: column?.id || columns![0].id,
+      columnId: column?.id || columns![0].id, // TODO: Fix when a board doesn't have columns.
       subtasks,
       id: task?.id || undefined,
     };

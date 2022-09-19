@@ -1,6 +1,5 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
-  Button,
   Card,
   Checkbox as MuiCheckbox,
   IconButton,
@@ -26,7 +25,7 @@ import {
 } from "../../stores/api/tasksApi";
 import { RootState } from "../../stores/store";
 import { DARK_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
-import Modal from "../Modal";
+import DeleteModal from "../Modal/DeleteModal";
 import AddEditTaskModal from "./AddEditTaskModal";
 
 type Props = {
@@ -286,41 +285,17 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
           </Typography>
         </MenuItem>
       </MuiMenu>
-      <Modal
+      <DeleteModal
         open={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
-        sx={{ width: { xs: "85vw", sm: 400, md: 600 } }}
-      >
-        <Typography variant="h5" color="error" fontWeight={700} mb={3}>
-          Delete this task?
-        </Typography>
-        <Typography paragraph color="text.secondary" mb={3}>
-          Are you sure you want to delete the &apos;{task.title}&apos; and its
-          subtasks? This action cannot be reversed.
-        </Typography>
-        <Stack flexDirection="row" gap={2}>
-          <Button
-            onClick={() => {
-              handleDeleteTask(task);
-            }}
-            variant="contained"
-            color="error"
-            fullWidth
-            size="large"
-          >
-            Delete
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseDeleteModal}
-            fullWidth
-            size="large"
-          >
-            Cancel
-          </Button>
-        </Stack>
-      </Modal>
+        onDelete={() => {
+          handleDeleteTask(task);
+        }}
+        onCancel={handleCloseDeleteModal}
+        title="Delete this task?"
+        description="Are you sure you want to delete the '{task.title}' and its
+          subtasks? This action cannot be reversed."
+      />
     </>
   );
 };

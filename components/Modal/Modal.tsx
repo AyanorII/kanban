@@ -5,8 +5,8 @@ import {
   Theme,
   useMediaQuery,
 } from "@mui/material";
-import { ModalType } from "../lib/types";
-import { DARK_GREY_COLOR } from "../styles/theme";
+import { ModalType } from "../../lib/types";
+import { DARK_GREY_COLOR } from "../../styles/theme";
 
 interface Props extends ModalType {
   children: React.ReactNode;
