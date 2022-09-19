@@ -1,10 +1,11 @@
 import { Button, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import { RootState } from "../../stores/store";
-import AddColumn from "./AddColumn";
+import AddColumn, { AddColumnModal } from "./AddColumn";
 import Column from "./Column";
 
 const ColumnsList = () => {
@@ -31,10 +32,23 @@ const ColumnsList = () => {
 export default ColumnsList;
 
 const AddColumnButton = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (): void => {
+    setOpen(true);
+  };
+
+  const handleClose = (): void => {
+    setOpen(false);
+  };
+
   return (
-    <Button variant="contained" color="primary">
-      + Add new column
-    </Button>
+    <>
+      <AddColumnModal open={open} onClose={handleClose} />
+      <Button variant="contained" color="primary" onClick={handleOpen}>
+        + Add new column
+      </Button>
+    </>
   );
 };
 

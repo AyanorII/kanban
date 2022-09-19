@@ -50,7 +50,7 @@ const AddColumn = () => {
 };
 export default AddColumn;
 
-const AddColumnModal = ({ open, onClose }: ModalType) => {
+export const AddColumnModal = ({ open, onClose }: ModalType) => {
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
@@ -76,8 +76,6 @@ const AddColumnModal = ({ open, onClose }: ModalType) => {
   const [addColumn, { error, isLoading }] = useAddColumnMutation();
 
   const onSubmit = async (data: AddColumnPayload) => {
-    console.log(data);
-
     await addColumn(data);
     onClose();
   };
@@ -96,7 +94,7 @@ const AddColumnModal = ({ open, onClose }: ModalType) => {
               label="Column name"
               error={Boolean(errors.name)}
               errorMessage={errors.name?.message}
-              placeholder="Urgent tasks"
+              placeholder="e.g Urgent tasks"
               rules={{
                 required: {
                   value: true,
