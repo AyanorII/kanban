@@ -4,19 +4,17 @@ import { Board, Column } from "../lib/types";
 
 type BoardState = {
   currentBoard: Board | null;
-  // columns: Column[];
 };
 
 const initialState: BoardState = {
   currentBoard: null,
-  // columns: [],
 };
 
 export const boardsSlice = createSlice({
   name: "boards",
   initialState,
   reducers: {
-    setCurrentBoard(state, action: PayloadAction<Board>) {
+    setCurrentBoard(state, action: PayloadAction<Board | null>) {
       return {
         ...state,
         currentBoard: action.payload,

@@ -1,15 +1,28 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import Image from "next/image";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
+import {
+  useBoardsQuery,
+  useDeleteBoardMutation,
+} from "../../stores/api/boardsApi";
+import { setCurrentBoard } from "../../stores/boardsSlice";
 import { toggleNav } from "../../stores/navSlice";
 import { RootState } from "../../stores/store";
 import { DARK_GREY_COLOR, WHITE_COLOR } from "../../styles/theme";
+import DeleteModal from "../Modal/DeleteModal";
 import AddTaskButton from "../Tasks/AddTaskButton";
+import AddEditBoardModal from "./AddEditBoardModal";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -35,15 +48,23 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const Header = () => {
-  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
+  const dispatch = useDispatch();
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard
   );
 
-  const { data: columns, isLoading } = useBoardColumnsQuery(currentBoard || skipToken);
-
   const open = useSelector((state: RootState) => state.nav.open);
+
+  const { data: boards } = useBoardsQuery();
 
   const toggleNavbar = () => {
     dispatch(toggleNav());
@@ -73,11 +94,15 @@ const Header = () => {
           </Typography>
         </Stack>
         <Stack flexDirection="row" alignItems="center">
-          {/* {columns && columns.length > 1 && <AddTaskButton />} */}
           <AddTaskButton />
-          <IconButton>
+          <IconButton onClick={handleClick} disabled={boards?.length === 0}>
             <MoreVertIcon sx={{ color: WHITE_COLOR }} />
           </IconButton>
+          <HeaderMenu
+            open={menuOpen}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+          />
         </Stack>
       </Toolbar>
     </AppBar>
@@ -85,3 +110,87 @@ const Header = () => {
 };
 
 export default Header;
+
+type MenuProps = {
+  anchorEl: null | HTMLElement;
+  open: boolean;
+  onClose: () => void;
+};
+
+const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const currentBoard = useSelector(
+    (state: RootState) => state.boards.currentBoard
+  );
+
+  const { data: boards } = useBoardsQuery();
+  const [deleteBoard, status] = useDeleteBoardMutation();
+  const dispatch = useDispatch();
+
+  /* ------------------------------ Edit modal ------------------------------ */
+  const handleOpenEditModal = () => {
+    setEditModalOpen(true);
+  };
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+  };
+  const handleEditClick = () => {
+    handleOpenEditModal();
+    onClose();
+  };
+  /* ------------------------------ Edit modal ------------------------------ */
+
+  /* ----------------------------- Delete modal ----------------------------- */
+  const handleOpenDeleteModal = () => {
+    setDeleteModalOpen(true);
+  };
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+  };
+  const handleDelete = async () => {
+    const response = await deleteBoard(currentBoard!);
+
+    if (boards && boards.length) {
+      dispatch(setCurrentBoard(boards[0]));
+    } else {
+      dispatch(setCurrentBoard(null));
+    }
+
+    handleCloseDeleteModal();
+  };
+  /* ----------------------------- Delete modal ----------------------------- */
+
+  return (
+    <>
+      <AddEditBoardModal
+        open={editModalOpen}
+        onClose={handleCloseEditModal}
+        board={currentBoard || undefined}
+      />
+      <DeleteModal
+        open={deleteModalOpen}
+        onClose={onClose}
+        onDelete={handleDelete}
+        onCancel={handleCloseDeleteModal}
+        title="Delete this board?"
+        description={`Are you sure you want to delete the '${currentBoard?.name}' board? This action will remove all columns and tasks and cannot be reversed.`}
+      />
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={onClose}
+        PaperProps={{ sx: { bgcolor: DARK_GREY_COLOR } }}
+      >
+        <MenuItem onClick={handleEditClick}>Edit Board</MenuItem>
+        <MenuItem onClick={handleOpenDeleteModal}>
+          <Typography paragraph mb={0} fontWeight={600} color="error">
+            Delete Board
+          </Typography>
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};

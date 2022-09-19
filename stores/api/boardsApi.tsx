@@ -21,8 +21,19 @@ const boardsApi = apiSlice.injectEndpoints({
         body: payload,
       }),
     }),
+    deleteBoard: builder.mutation<void, Board>({
+      query: (board) => ({
+        url: `/boards/${board.id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Boards"],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useCreateBoardMutation, useBoardsQuery } = boardsApi;
+export const {
+  useCreateBoardMutation,
+  useBoardsQuery,
+  useDeleteBoardMutation,
+} = boardsApi;
