@@ -35,6 +35,7 @@ const AddColumn = () => {
           width: COLUMN_WIDTH,
           marginTop: "48px",
           cursor: "pointer",
+          minHeight: '50vh'
         }}
       >
         <Stack height="100%" justifyContent="center" alignItems="center">

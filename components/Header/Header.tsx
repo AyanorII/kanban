@@ -132,6 +132,7 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
   /* ------------------------------ Edit modal ------------------------------ */
   const handleOpenEditModal = () => {
     setEditModalOpen(true);
+    onClose()
   };
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
@@ -145,6 +146,7 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
   /* ----------------------------- Delete modal ----------------------------- */
   const handleOpenDeleteModal = () => {
     setDeleteModalOpen(true);
+    onClose()
   };
   const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);

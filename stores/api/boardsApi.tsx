@@ -15,11 +15,20 @@ const boardsApi = apiSlice.injectEndpoints({
       providesTags: ["Boards", "Columns", "Subtasks", "Subtasks"],
     }),
     createBoard: builder.mutation<Board, BoardPayload>({
-      query: (payload: BoardPayload) => ({
-        url: "/boards",
-        method: "POST",
-        body: payload,
-      }),
+      query: (payload: BoardPayload) => {
+        const { columns } = payload;
+
+        const filteredColumns = columns.filter(
+          (column) => typeof column === "string"
+        );
+
+        return {
+          url: "/boards",
+          method: "POST",
+          body: { ...payload, columns: filteredColumns },
+        };
+      },
+      invalidatesTags: ["Boards"],
     }),
     deleteBoard: builder.mutation<void, Board>({
       query: (board) => ({

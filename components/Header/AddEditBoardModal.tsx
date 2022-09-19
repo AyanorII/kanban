@@ -10,12 +10,15 @@ import {
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { Board, ModalType } from "../../lib/types";
 import {
   BoardPayload,
   useCreateBoardMutation,
 } from "../../stores/api/boardsApi";
 import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
+import { setCurrentBoard } from "../../stores/boardsSlice";
+import { RootState } from "../../stores/store";
 import { MEDIUM_GREY_COLOR } from "../../styles/theme";
 import Input from "../Input";
 import Modal from "../Modal/Modal";
@@ -55,12 +58,23 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
   });
 
   const isEditing = Boolean(board);
+  const dispatch = useDispatch();
 
-  const [createBoard] = useCreateBoardMutation();
+  const [createBoard, result] = useCreateBoardMutation();
   // const [updateBoard] = useCreateBoardMutation();
 
+  const currentBoard = useSelector(
+    (state: RootState) => state.boards.currentBoard
+  );
+
   const onSubmit = async (data: BoardPayload): Promise<void> => {
-    const response = await createBoard(data);
+    try {
+      const createdBoard = await createBoard(data).unwrap();
+      dispatch(setCurrentBoard(createdBoard));
+    } catch (err) {
+      console.log(err);
+    }
+
     reset();
     onClose();
   };
