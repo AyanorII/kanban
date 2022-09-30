@@ -239,11 +239,6 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
   const handleDeleteTask = async (task: Task) => {
     const response = await deleteTask(task);
 
-    if (isError) {
-      console.error(error);
-    } else {
-      console.log(response);
-    }
     handleCloseDeleteModal();
   };
 

@@ -45,3 +45,12 @@ export interface TaskPayload {
   }[];
   columnId: Column["id"];
 }
+
+export interface RequestError {
+  data: {
+    statusCode: number;
+    message: string;
+    error: string;
+  };
+  status: number
+}

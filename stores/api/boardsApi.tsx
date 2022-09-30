@@ -2,9 +2,11 @@ import { Board } from "../../lib/types";
 import { apiSlice } from "../apiSlice";
 
 export interface BoardPayload {
+  id?: number;
   name: string;
   columns: {
-    title: string;
+    name: string;
+    id?: number;
   }[];
 }
 
@@ -16,26 +18,36 @@ const boardsApi = apiSlice.injectEndpoints({
     }),
     createBoard: builder.mutation<Board, BoardPayload>({
       query: (payload: BoardPayload) => {
-        const { columns } = payload;
-
-        const filteredColumns = columns.filter(
-          (column) => typeof column === "string"
-        );
+        const columns = payload.columns
+          .filter((column) => typeof column === "string")
+          .map(({name}) => ({ name }));
 
         return {
           url: "/boards",
           method: "POST",
-          body: { ...payload, columns: filteredColumns },
+          body: { ...payload, columns },
         };
       },
       invalidatesTags: ["Boards"],
+    }),
+    updateBoard: builder.mutation({
+      query: (payload: BoardPayload) => {
+        const { id } = payload
+
+        return {
+          url: `/boards/${id}`,
+          method: "PATCH",
+          body: payload ,
+        };
+      },
+      invalidatesTags: ["Boards", "Columns"]
     }),
     deleteBoard: builder.mutation<void, Board>({
       query: (board) => ({
         url: `/boards/${board.id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Boards"],
+      invalidatesTags: ["Boards", "Columns", "Tasks"],
     }),
   }),
   overrideExisting: false,
@@ -45,4 +57,5 @@ export const {
   useCreateBoardMutation,
   useBoardsQuery,
   useDeleteBoardMutation,
+  useUpdateBoardMutation,
 } = boardsApi;

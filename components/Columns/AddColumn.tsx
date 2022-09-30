@@ -2,7 +2,7 @@ import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { ModalType } from "../../lib/types";
+import { ModalType, RequestError } from "../../lib/types";
 import {
   AddColumnPayload,
   useAddColumnMutation,
@@ -35,7 +35,7 @@ const AddColumn = () => {
           width: COLUMN_WIDTH,
           marginTop: "48px",
           cursor: "pointer",
-          minHeight: '50vh'
+          minHeight: "50vh",
         }}
       >
         <Stack height="100%" justifyContent="center" alignItems="center">
@@ -65,6 +65,7 @@ export const AddColumnModal = ({ open, onClose }: ModalType) => {
     formState: { errors },
     handleSubmit,
     setValue,
+    setError,
   } = useForm({
     defaultValues,
   });
@@ -73,11 +74,23 @@ export const AddColumnModal = ({ open, onClose }: ModalType) => {
     currentBoard && setValue("boardId", currentBoard.id);
   }, [currentBoard]);
 
-  const [addColumn, { error, isLoading }] = useAddColumnMutation();
+  const [addColumn] = useAddColumnMutation();
 
   const onSubmit = async (data: AddColumnPayload) => {
-    await addColumn(data);
-    onClose();
+    try {
+      await addColumn(data).unwrap();
+      onClose();
+    } catch (err) {
+      const error = err as RequestError;
+      setError(
+        "name",
+        {
+          message: error.data.message,
+          type: error.data.error,
+        },
+        { shouldFocus: true }
+      );
+    }
   };
 
   return (

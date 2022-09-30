@@ -18,10 +18,22 @@ const columnsApi = apiSlice.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      // transformResponse: (response) => response.data,
       invalidatesTags: ["Columns"],
+    }),
+    deleteColumn: builder.mutation<void, number>({
+      query: (id: number) => ({
+        url: `/columns/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Boards", "Columns"],
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useBoardColumnsQuery, useAddColumnMutation } = columnsApi;
+export const {
+  useBoardColumnsQuery,
+  useAddColumnMutation,
+  useDeleteColumnMutation,
+} = columnsApi;

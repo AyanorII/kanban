@@ -166,11 +166,11 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
 
   return (
     <>
-      <AddEditBoardModal
+      {currentBoard && <AddEditBoardModal
         open={editModalOpen}
         onClose={handleCloseEditModal}
         board={currentBoard || undefined}
-      />
+      />}
       <DeleteModal
         open={deleteModalOpen}
         onClose={onClose}

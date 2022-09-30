@@ -5,20 +5,23 @@ import {
   InputLabel,
   Stack,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { Board, ModalType } from "../../lib/types";
+import { useDispatch } from "react-redux";
+import { Board, ModalType, RequestError } from "../../lib/types";
 import {
   BoardPayload,
   useCreateBoardMutation,
+  useUpdateBoardMutation
 } from "../../stores/api/boardsApi";
-import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
+import {
+  useBoardColumnsQuery,
+  useDeleteColumnMutation
+} from "../../stores/api/columnsApi";
 import { setCurrentBoard } from "../../stores/boardsSlice";
-import { RootState } from "../../stores/store";
 import { MEDIUM_GREY_COLOR } from "../../styles/theme";
 import Input from "../Input";
 import Modal from "../Modal/Modal";
@@ -36,18 +39,28 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
   const { data: columns, isLoading } = useBoardColumnsQuery(board || skipToken);
 
   useEffect(() => {
-    if (columns && columns.length) {
-      defaultValues.columns = columns.map((column) => ({
-        title: column.name,
-      }));
+    if (board) {
+      setValue("name", board.name);
     }
-  }, [columns]);
+  }, [board]);
+
+  useEffect(() => {
+    if (columns?.length) {
+      remove();
+      columns.forEach(({ name, id }) => {
+        append({ name, id });
+      });
+    }
+  }, [columns, isLoading]);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    getValues,
+    setError,
   } = useForm<BoardPayload>({
     defaultValues,
   });
@@ -61,22 +74,32 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
   const dispatch = useDispatch();
 
   const [createBoard, result] = useCreateBoardMutation();
-  // const [updateBoard] = useCreateBoardMutation();
+  const [updateBoard] = useUpdateBoardMutation();
+  const [deleteColumn] = useDeleteColumnMutation();
 
-  const currentBoard = useSelector(
-    (state: RootState) => state.boards.currentBoard
-  );
+  const removeColumn = async (index: number, id: number) => {
+    remove(index);
+    await deleteColumn(id);
+  };
 
   const onSubmit = async (data: BoardPayload): Promise<void> => {
+    console.log(data);
     try {
-      const createdBoard = await createBoard(data).unwrap();
-      dispatch(setCurrentBoard(createdBoard));
+      if (isEditing) {
+        const updatedBoard = await updateBoard({
+          id: board!.id,
+          ...data,
+        }).unwrap();
+        dispatch(setCurrentBoard(updatedBoard));
+      } else {
+        const createdBoard = await createBoard(data).unwrap();
+      }
+      reset();
+      onClose();
     } catch (err) {
-      console.log(err);
+      const { data: error, status } = err as RequestError;
+      setError("name", { message: error.message });
     }
-
-    reset();
-    onClose();
   };
 
   const COLUMNS_PLACEHOLDERS = [
@@ -88,8 +111,8 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Typography variant="h5" mb={3}>
-        {isEditing ? "Edit Board" : "Add New Board"}
+      <Typography variant="h5" mb={3} onClick={() => remove()}>
+        {isEditing ? "Edit Board" : "Add New Board "}
       </Typography>
       {!isLoading && (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -124,13 +147,21 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
                             index % COLUMNS_PLACEHOLDERS.length
                           ]
                         }`}
-                        value={controllerField.value.title}
+                        value={controllerField.value.name}
+                        onChange={(e) =>
+                          setValue(`columns.${index}`, {
+                            ...getValues(`columns.${index}`),
+                            name: e.currentTarget.value,
+                          })
+                        }
                       />
                     )}
                   />
                   <IconButton
                     aria-label="delete"
-                    onClick={() => remove(index)}
+                    onClick={() =>
+                      removeColumn(index, getValues(`columns.${index}`)!.id!)
+                    }
                     sx={{ paddingRight: 0 }}
                   >
                     <CloseIcon sx={{ color: MEDIUM_GREY_COLOR }} />
@@ -143,7 +174,7 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
               color="secondary"
               onClick={() =>
                 append({
-                  title: "",
+                  name: "",
                 })
               }
             >
