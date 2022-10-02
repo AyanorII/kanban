@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,
+  FormHelperText,
   IconButton,
   InputLabel,
   MenuItem,
@@ -24,7 +25,11 @@ import {
   useUpdateTaskMutation,
 } from "../../stores/api/tasksApi";
 import { RootState } from "../../stores/store";
-import { MEDIUM_GREY_COLOR } from "../../styles/theme";
+import {
+  DANGER_COLOR,
+  MEDIUM_GREY_COLOR,
+  WHITE_COLOR,
+} from "../../styles/theme";
 import Input from "../Input";
 import Modal from "../Modal/Modal";
 
@@ -200,33 +205,52 @@ const AddEditTaskModal = ({ open, onClose, task }: Props) => {
           {/* --------------------------- Subtasks ------------------------- */}
           {/* ---------------------------- Status -------------------------- */}
           <Stack gap={1}>
-            <InputLabel>Status</InputLabel>
+            <InputLabel
+              sx={{
+                color: Boolean(errors.status) ? DANGER_COLOR : WHITE_COLOR,
+              }}
+            >
+              Status
+            </InputLabel>
             {!areColumnsLoading && (
               <Controller
                 control={control}
                 name="status"
                 defaultValue={defaultValues.status}
+                rules={{
+                  required: { value: true, message: "Status can't be blank." },
+                }}
                 render={({ field }) => (
-                  <Select
-                    {...field}
-                    fullWidth
-                    sx={{
-                      border: `1px solid ${MEDIUM_GREY_COLOR}70`,
-                      "& .MuiSelect-icon": {
-                        color: MEDIUM_GREY_COLOR,
-                      },
-                    }}
-                  >
-                    {columns?.map((column) => {
-                      const { id, name } = column;
+                  <>
+                    <Select
+                      {...field}
+                      fullWidth
+                      error={Boolean(errors.status)}
+                      sx={{
+                        border: `1px solid ${MEDIUM_GREY_COLOR}70`,
+                        "& .MuiSelect-icon": {
+                          color: MEDIUM_GREY_COLOR,
+                        },
+                      }}
+                    >
+                      {columns?.map((column) => {
+                        const { id, name } = column;
 
-                      return (
-                        <MenuItem key={id} value={name}>
-                          {name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
+                        return (
+                          <MenuItem key={id} value={name}>
+                            {name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                    {errors.status && (
+                      <FormHelperText
+                        sx={{ color: DANGER_COLOR, fontWeight: 600, mt: -1 }}
+                      >
+                        {errors.status.message}
+                      </FormHelperText>
+                    )}
+                  </>
                 )}
               />
             )}

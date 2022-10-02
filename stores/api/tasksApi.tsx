@@ -32,11 +32,12 @@ const tasksApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Boards", "Columns", "Tasks"],
     }),
     createTask: builder.mutation<Task, TaskPayload>({
-      query: (task) => ({
-        url: "/tasks",
-        method: "POST",
-        body: task,
-      }),
+      query: (task) => {
+        let { subtasks, ...rest } = task;
+        subtasks = subtasks?.filter((subtask) => subtask.title !== "");
+
+        return { url: "/tasks", method: "POST", body: { ...rest, subtasks } };
+      },
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
     deleteTask: builder.mutation<Task, any>({
