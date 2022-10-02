@@ -19,7 +19,7 @@ const boardsApi = apiSlice.injectEndpoints({
     createBoard: builder.mutation<Board, BoardPayload>({
       query: (payload: BoardPayload) => {
         const columns = payload.columns
-          .filter((column) => typeof column === "string")
+          .filter((column) => column.name !== "")
           .map(({name}) => ({ name }));
 
         return {
