@@ -1,22 +1,21 @@
-import React from 'react'
 import { styled } from "@mui/material/styles";
-import { useSelector } from 'react-redux';
-import { RootState } from '../stores/store';
-import { DrawerHeader } from './Nav';
-import { DARK_BACKGROUND_COLOR } from '../styles/theme';
+import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../stores/store";
+import { DARK_BACKGROUND_COLOR } from "../styles/theme";
+import { DrawerHeader } from "./Nav";
 
 type Props = {
   children: React.ReactNode;
-}
+};
 
-const Main = ({children}: Props) => {
+const StyledMain = styled("main", {
+  shouldForwardProp: (prop) => prop !== "open",
+})<{
+  open?: boolean;
+}>(({ theme, open }) => {
   const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
-
-  const StyledMain = styled("main", {
-    shouldForwardProp: (prop) => prop !== "open",
-  })<{
-    open?: boolean;
-  }>(({ theme, open }) => ({
+  return {
     backgroundColor: DARK_BACKGROUND_COLOR,
     minHeight: "100vh",
     flexGrow: 1,
@@ -33,14 +32,18 @@ const Main = ({children}: Props) => {
       }),
       marginLeft: 0,
     }),
-  }));
+  };
+});
+
+const Main = ({ children }: Props) => {
+  const open = useSelector((state: RootState) => state.nav.open);
 
   return (
-    <StyledMain>
+    <StyledMain open={open}>
       <DrawerHeader />
       {children}
     </StyledMain>
-  )
-}
+  );
+};
 
-export default Main
+export default Main;
