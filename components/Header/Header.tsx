@@ -167,10 +167,10 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
   const handleDelete = async () => {
     const response = await deleteBoard(currentBoard!);
 
-    if (boards && boards.length) {
+    if (boards && boards.length > 1) {
       dispatch(setCurrentBoard(boards[0]));
     } else {
-      dispatch(setCurrentBoard(null));
+      dispatch(resetCurrentBoard(null));
     }
 
     handleCloseDeleteModal();

@@ -10,7 +10,7 @@ import { useBoardsQuery } from "../stores/api/boardsApi";
 import { setCurrentBoard } from "../stores/boardsSlice";
 import { RootState } from "../stores/store";
 import { setAccessToken } from "../stores/userSlice";
-import { PRIMARY_COLOR } from '../styles/theme';
+import { PRIMARY_COLOR } from "../styles/theme";
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
@@ -40,10 +40,22 @@ const Home: NextPage = () => {
         window.localStorage.getItem("currentBoard");
 
       if (currentBoardInLocalStorage && !currentBoard) {
-        dispatch(setCurrentBoard(JSON.parse(currentBoardInLocalStorage)));
+        const parsedCurrentBoard =
+          currentBoardInLocalStorage === "undefined"
+            ? null
+            : JSON.parse(currentBoardInLocalStorage);
+
+        if (parsedCurrentBoard) {
+          dispatch(setCurrentBoard(parsedCurrentBoard));
+        }
       } else if (!currentBoardInLocalStorage && boards) {
-        dispatch(setCurrentBoard(boards[0]));
-        window.localStorage.setItem("currentBoard", JSON.stringify(boards[0]));
+        if (boards.length >= 1) {
+          dispatch(setCurrentBoard(boards[0]));
+          window.localStorage.setItem(
+            "currentBoard",
+            JSON.stringify(boards[0])
+          );
+        }
       }
     }
   }, [accessToken, boards]);
