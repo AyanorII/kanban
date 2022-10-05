@@ -3,6 +3,8 @@ import { Column as IColumn } from "../../lib/types";
 import { useTasksQuery } from "../../stores/api/tasksApi";
 import TaskCard from "../Tasks/TaskCard";
 import ColumnName from "./ColumnName";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../stores/store';
 
 type Props = {
   column: IColumn;
@@ -11,7 +13,10 @@ type Props = {
 export const COLUMN_WIDTH = "280px";
 
 const Column = ({ column }: Props) => {
-  const { data: tasks, isLoading, error } = useTasksQuery(column);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken)
+  const { data: tasks, isLoading, error } = useTasksQuery(column, {
+    skip: !accessToken
+  });
 
   return (
     <Stack gap={2} width={COLUMN_WIDTH}>

@@ -1,5 +1,5 @@
 import { InputLabel, Stack, TextField } from "@mui/material";
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, RegisterOptions } from "react-hook-form";
 import { DANGER_COLOR, WHITE_COLOR } from "../styles/theme";
 
 type Props = {
@@ -9,12 +9,7 @@ type Props = {
   error: boolean;
   errorMessage?: string;
   control: Control<any>;
-  rules?: {
-    required: {
-      value: boolean;
-      message: string;
-    };
-  };
+  rules?: RegisterOptions;
   placeholder?: string;
   multiline?: boolean;
 };

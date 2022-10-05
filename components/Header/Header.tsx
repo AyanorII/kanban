@@ -64,7 +64,10 @@ const Header = () => {
 
   const open = useSelector((state: RootState) => state.nav.open);
 
-  const { data: boards } = useBoardsQuery();
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const { data: boards } = useBoardsQuery(undefined, {
+    skip: !accessToken,
+  });
 
   const toggleNavbar = () => {
     dispatch(toggleNav());
@@ -84,14 +87,16 @@ const Header = () => {
               <Image src="/logo-mobile.svg" width="25px" height="25px" />
             </IconButton>
           )}
-          <Typography
-            variant="h5"
-            letterSpacing="0.75px"
-            color="text.primary"
-            marginLeft="1rem"
-          >
-            {currentBoard?.name}
-          </Typography>
+          {currentBoard && (
+            <Typography
+              variant="h5"
+              letterSpacing="0.75px"
+              color="text.primary"
+              marginLeft="1rem"
+            >
+              {currentBoard.name}
+            </Typography>
+          )}
         </Stack>
         <Stack flexDirection="row" alignItems="center">
           <AddTaskButton />
@@ -125,14 +130,17 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
     (state: RootState) => state.boards.currentBoard
   );
 
-  const { data: boards } = useBoardsQuery();
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const { data: boards } = useBoardsQuery(undefined, {
+    skip: !accessToken,
+  });
   const [deleteBoard, status] = useDeleteBoardMutation();
   const dispatch = useDispatch();
 
   /* ------------------------------ Edit modal ------------------------------ */
   const handleOpenEditModal = () => {
     setEditModalOpen(true);
-    onClose()
+    onClose();
   };
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
@@ -146,7 +154,7 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
   /* ----------------------------- Delete modal ----------------------------- */
   const handleOpenDeleteModal = () => {
     setDeleteModalOpen(true);
-    onClose()
+    onClose();
   };
   const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);
@@ -166,11 +174,13 @@ const HeaderMenu = ({ anchorEl, open, onClose }: MenuProps) => {
 
   return (
     <>
-      {currentBoard && <AddEditBoardModal
-        open={editModalOpen}
-        onClose={handleCloseEditModal}
-        board={currentBoard || undefined}
-      />}
+      {currentBoard && (
+        <AddEditBoardModal
+          open={editModalOpen}
+          onClose={handleCloseEditModal}
+          board={currentBoard || undefined}
+        />
+      )}
       <DeleteModal
         open={deleteModalOpen}
         onClose={onClose}

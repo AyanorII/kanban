@@ -31,10 +31,9 @@ import AddEditTaskModal from "./AddEditTaskModal";
 type Props = {
   task: Task;
   completedSubtasks: Subtask[];
-  column: Column;
 };
 
-const TaskInfo = ({ task, completedSubtasks, column }: Props) => {
+const TaskInfo = ({ task, completedSubtasks }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -45,9 +44,16 @@ const TaskInfo = ({ task, completedSubtasks, column }: Props) => {
     setAnchorEl(null);
   };
 
-  const { title, description, columnId } = task;
+  const { title, description } = task;
 
-  const { data: subtasks, isLoading, error } = useSubtasksQuery(task);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const {
+    data: subtasks,
+    isLoading,
+    error,
+  } = useSubtasksQuery(task, {
+    skip: !accessToken,
+  });
   const [updateTask] = useUpdateTaskStatusMutation();
 
   const currentBoard = useSelector(
@@ -217,7 +223,7 @@ type MenuProps = {
 
 const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [isAddEditTaskModalOpen, setIsAddEditTaskModalOpen] = useState(false);
   const [deleteTask, { isError, error }] = useDeleteTaskMutation();
 
   const handleOpenDeleteModal = () => {
@@ -228,12 +234,12 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleOpenEditTaskModal = () => {
-    setIsEditTaskModalOpen(true);
+  const handleOpenAddEditTaskModal = () => {
+    setIsAddEditTaskModalOpen(true);
   };
 
-  const handleCloseEditTaskModal = () => {
-    setIsEditTaskModalOpen(false);
+  const handleCloseAddEditTaskModal = () => {
+    setIsAddEditTaskModalOpen(false);
   };
 
   const handleDeleteTask = async (task: Task) => {
@@ -244,7 +250,7 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
 
   const handleClickEdit = () => {
     handleClose();
-    handleOpenEditTaskModal();
+    handleOpenAddEditTaskModal();
   };
 
   const handleClickDelete = () => {
@@ -255,8 +261,8 @@ const Menu = ({ open, handleClose, anchorEl, task }: MenuProps) => {
   return (
     <>
       <AddEditTaskModal
-        open={isEditTaskModalOpen}
-        onClose={handleCloseEditTaskModal}
+        open={isAddEditTaskModalOpen}
+        onClose={handleCloseAddEditTaskModal}
         task={task}
       />
       <MuiMenu

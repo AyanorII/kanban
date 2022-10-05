@@ -22,7 +22,10 @@ const Nav = () => {
   const open = useSelector((state: RootState) => state.nav.open);
   const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
 
-  const { data: boards, isLoading, error } = useBoardsQuery();
+  const accessToken = useSelector((state: RootState) => state.user.accessToken)
+  const { data: boards, isLoading, error } = useBoardsQuery(undefined, {
+    skip: !accessToken
+  });
   const toggleNavbar = () => {
     dispatch(toggleNav());
   };

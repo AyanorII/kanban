@@ -2,7 +2,7 @@ import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { ModalType, RequestError } from "../../lib/types";
+import { ModalType, ResponseError } from "../../lib/types";
 import {
   AddColumnPayload,
   useAddColumnMutation,
@@ -81,7 +81,7 @@ export const AddColumnModal = ({ open, onClose }: ModalType) => {
       await addColumn(data).unwrap();
       onClose();
     } catch (err) {
-      const error = err as RequestError;
+      const error = err as ResponseError;
       setError(
         "name",
         {

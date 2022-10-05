@@ -27,7 +27,10 @@ const BoardList = () => {
 
   const dispatch = useDispatch();
 
-  const { data: boards } = useBoardsQuery();
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const { data: boards } = useBoardsQuery(undefined, {
+    skip: !accessToken,
+  });
 
   const currentBoard = useSelector(
     (state: RootState) => state.boards.currentBoard

@@ -42,10 +42,16 @@ const AddEditTaskModal = ({ open, onClose, task }: Props) => {
     (state: RootState) => state.boards.currentBoard
   );
 
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const { data: columns, isLoading: areColumnsLoading } = useBoardColumnsQuery(
-    currentBoard || skipToken
+    currentBoard || skipToken,
+    {
+      skip: !accessToken,
+    }
   );
-  const { data: subtasks } = useSubtasksQuery(task || skipToken);
+  const { data: subtasks } = useSubtasksQuery(task || skipToken, {
+    skip: !accessToken,
+  });
 
   const hasColumns = !areColumnsLoading && columns && columns.length > 1;
 
@@ -100,17 +106,21 @@ const AddEditTaskModal = ({ open, onClose, task }: Props) => {
 
     const payload: TaskPayload = {
       ...data,
-      columnId: column?.id || columns![0].id, // TODO: Fix when a board doesn't have columns.
-      subtasks,
+      columnId: column?.id || columns![0].id,
+      subtasks: subtasks || [],
       id: task?.id || undefined,
     };
 
-    const response = isEditingTask
-      ? await updateTask(payload)
-      : await createTask(payload);
+    try {
+      isEditingTask
+        ? await updateTask(payload).unwrap()
+        : await createTask(payload).unwrap();
 
-    reset();
-    onClose();
+      reset();
+      onClose();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const SUBTASK_PLACEHOLDERS = [

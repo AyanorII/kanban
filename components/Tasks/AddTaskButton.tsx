@@ -5,8 +5,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useBoardColumnsQuery } from "../../stores/api/columnsApi";
 import { RootState } from "../../stores/store";
-import AddEditTaskModal from "./AddEditTaskModal";
 import { MEDIUM_GREY_COLOR } from "../../styles/theme";
+import AddEditTaskModal from "./AddEditTaskModal";
 
 const AddTaskButton = () => {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,10 @@ const AddTaskButton = () => {
     (state: RootState) => state.boards.currentBoard
   );
 
-  const { data: columns } = useBoardColumnsQuery(currentBoard || skipToken);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const { data: columns } = useBoardColumnsQuery(currentBoard || skipToken, {
+    skip: !accessToken,
+  });
 
   return (
     <>
