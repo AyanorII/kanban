@@ -59,7 +59,7 @@ let muiTheme = createTheme({
     },
     body1: {
       fontWeight: 500,
-    }
+    },
   },
   components: {
     /* ------------------------------- Button ------------------------------- */
@@ -81,7 +81,8 @@ let muiTheme = createTheme({
           backgroundColor: WHITE_COLOR,
           color: PRIMARY_COLOR,
           "&:hover": {
-            backgroundColor: WHITE_COLOR,
+            backgroundColor: MEDIUM_GREY_COLOR,
+            color: WHITE_COLOR
           },
         },
         containedError: {
@@ -164,7 +165,7 @@ let muiTheme = createTheme({
 
           "& .MuiMenuItem-root": {
             fontWeight: 600,
-            color: MEDIUM_GREY_COLOR
+            color: MEDIUM_GREY_COLOR,
           },
         },
       },
