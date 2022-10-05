@@ -1,58 +1,68 @@
-import { Container } from "@mui/material";
-import axios from "axios";
-import type { GetStaticProps, NextPage } from "next";
+import { Container, Stack } from "@mui/material";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { Triangle } from "react-loader-spinner";
+import { useDispatch, useSelector } from "react-redux";
 import ColumnsList from "../components/Columns/ColumnsList";
-import { Board } from "../lib/types";
+import Layout from "../components/Layout";
+import { useBoardsQuery } from "../stores/api/boardsApi";
 import { setCurrentBoard } from "../stores/boardsSlice";
+import { RootState } from "../stores/store";
+import { setAccessToken } from "../stores/userSlice";
+import { PRIMARY_COLOR } from '../styles/theme';
 
-type Props = {
-  currentBoard: Board;
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const boardsApiUrl = `${process.env.NEXT_PUBLIC_API_URL}/boards`;
-
-  const boardsResponse = await axios.get(boardsApiUrl);
-  const boards = boardsResponse.data as Board[];
-  const firstBoard = boards[0];
-
-  const firstBoardResponse = await axios.get(
-    boardsApiUrl + `/${firstBoard.id}`
-  );
-
-  const currentBoard = firstBoardResponse.data;
-
-  return {
-    props: {
-      currentBoard,
-    },
-  };
-};
-
-const Home: NextPage<Props> = ({ currentBoard }) => {
+const Home: NextPage = () => {
   const dispatch = useDispatch();
+
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const isLoading = useSelector((state: RootState) => state.user.isLoading);
+  const currentBoard = useSelector(
+    (state: RootState) => state.boards.currentBoard
+  );
+  const router = useRouter();
+
+  const { data: boards } = useBoardsQuery(undefined, {
+    skip: !accessToken,
+  });
 
   useEffect(() => {
     if (window) {
+      const tokenInLocalStorage = window.localStorage.getItem("accessToken");
+
+      if (tokenInLocalStorage && !accessToken) {
+        dispatch(setAccessToken(tokenInLocalStorage));
+      } else if (!tokenInLocalStorage && !accessToken) {
+        router.push("login");
+      }
+
       const currentBoardInLocalStorage =
         window.localStorage.getItem("currentBoard");
 
-      if (currentBoardInLocalStorage) {
-        const parsedCurrentBoard = JSON.parse(currentBoardInLocalStorage);
-        dispatch(setCurrentBoard(parsedCurrentBoard));
-      } else {
-        dispatch(setCurrentBoard(currentBoard));
+      if (currentBoardInLocalStorage && !currentBoard) {
+        dispatch(setCurrentBoard(JSON.parse(currentBoardInLocalStorage)));
+      } else if (!currentBoardInLocalStorage && boards) {
+        dispatch(setCurrentBoard(boards[0]));
+        window.localStorage.setItem("currentBoard", JSON.stringify(boards[0]));
       }
-      return () => {};
     }
-  }, []);
+  }, [accessToken, boards]);
 
-  return (
-    <Container maxWidth={false}>
-      <ColumnsList />
-    </Container>
+  return isLoading || !accessToken ? (
+    <Stack justifyContent="center" alignItems="center" minHeight="100vh">
+      <Triangle
+        height="50vh"
+        width="50vw"
+        color={PRIMARY_COLOR}
+        ariaLabel="triangle-loading"
+        wrapperStyle={{}}
+        visible={true}
+      />
+    </Stack>
+  ) : (
+    <Layout>
+      <Container maxWidth={false}>{currentBoard && <ColumnsList />}</Container>
+    </Layout>
   );
 };
 
