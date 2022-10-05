@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { Board, Column } from "../lib/types";
+import { Board } from "../lib/types";
 
 type BoardState = {
   currentBoard: Board | null;
@@ -24,17 +24,19 @@ export const boardsSlice = createSlice({
         currentBoard: action.payload,
       };
     },
-    setCurrentBoardColumn(state, action: PayloadAction<Column[]>) {
+    resetCurrentBoard(state, _action) {
+      window.localStorage.removeItem("currentBoard");
+
       return {
         ...state,
-        columns: action.payload,
+        currentBoard: null,
       };
     },
   },
 });
 
 // this is for dispatch
-export const { setCurrentBoard, setCurrentBoardColumn } = boardsSlice.actions;
+export const { setCurrentBoard, resetCurrentBoard } = boardsSlice.actions;
 
 // this is for configureStore
 export default boardsSlice.reducer;

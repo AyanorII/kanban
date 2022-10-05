@@ -18,7 +18,6 @@ const columnsApi = apiSlice.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      // transformResponse: (response) => response.data,
       invalidatesTags: ["Columns"],
     }),
     deleteColumn: builder.mutation<void, number>({
