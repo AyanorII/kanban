@@ -9,17 +9,17 @@ import {
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
-import Image from "next/image";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useBoardsQuery,
   useDeleteBoardMutation,
 } from "../../stores/api/boardsApi";
-import { setCurrentBoard } from "../../stores/boardsSlice";
+import { resetCurrentBoard, setCurrentBoard } from "../../stores/boardsSlice";
 import { toggleNav } from "../../stores/navSlice";
 import { RootState } from "../../stores/store";
 import { DARK_GREY_COLOR, WHITE_COLOR } from "../../styles/theme";
+import Logo from "../Logo";
 import DeleteModal from "../Modal/DeleteModal";
 import AddTaskButton from "../Tasks/AddTaskButton";
 import AddEditBoardModal from "./AddEditBoardModal";
@@ -89,7 +89,7 @@ const Header = () => {
         >
           {!open && (
             <IconButton color="inherit" aria-label="open drawer" edge="start">
-              <Image src="/logo-mobile.svg" width="25px" height="25px" />
+              <Logo mobile/>
             </IconButton>
           )}
           {currentBoard && (

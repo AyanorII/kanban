@@ -7,7 +7,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,6 +25,7 @@ import {
   WHITE_COLOR,
 } from "../styles/theme";
 import Input from "./Input";
+import Logo from "./Logo";
 
 type Props = {
   action: AuthAction;
@@ -75,7 +75,6 @@ const Auth = ({ action }: Props) => {
         dispatch(setAccessToken(response!.accessToken));
         router.push("/");
       }
-
     } catch (err) {
       const responseError = err as ResponseError;
       setError(responseError.data.message);
@@ -93,11 +92,18 @@ const Auth = ({ action }: Props) => {
               paddingInline: 3,
             }}
           >
-            <Typography variant="h4" color="white" mb={3}>
+            <Logo />
+            <Typography
+              variant="h4"
+              mb={3}
+              mt={5}
+              sx={{ fontSize: { sm: "30px" } }}
+              letterSpacing="1.5px"
+            >
               {capitalizedAction}
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack gap={3}>
+              <Stack gap={2}>
                 <Input
                   control={control}
                   name="email"
@@ -159,19 +165,29 @@ const Auth = ({ action }: Props) => {
             </form>
             <Box textAlign="center">
               {action === "login" ? (
-                <Link href="/signup">Create an account</Link>
+                <Typography
+                  sx={{
+                    color: MEDIUM_GREY_COLOR,
+                    "& a": { color: WHITE_COLOR, marginLeft: 1 },
+                  }}
+                >
+                  Not a user yet?
+                  <Button href="/signup" variant="outlined">
+                    Create an account
+                  </Button>
+                </Typography>
               ) : (
-                <>
-                  <Typography
-                    sx={{
-                      color: MEDIUM_GREY_COLOR,
-                      "& a": { color: WHITE_COLOR, marginLeft: 1 },
-                    }}
-                  >
-                    Already have an account?
-                    <Link href="/login">Login</Link>
-                  </Typography>
-                </>
+                <Typography
+                  sx={{
+                    color: MEDIUM_GREY_COLOR,
+                    "& a": { color: WHITE_COLOR, marginLeft: 1 },
+                  }}
+                >
+                  Already have an account?
+                  <Button href="/login" variant="outlined">
+                    Login
+                  </Button>
+                </Typography>
               )}
             </Box>
           </CardContent>
