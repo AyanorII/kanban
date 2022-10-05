@@ -75,7 +75,7 @@ const Auth = ({ action }: Props) => {
         dispatch(setAccessToken(response!.accessToken));
         router.push("/");
       }
-      
+
     } catch (err) {
       const responseError = err as ResponseError;
       setError(responseError.data.message);
@@ -84,7 +84,7 @@ const Auth = ({ action }: Props) => {
 
   return (
     <Stack justifyContent="center" alignItems="center" minHeight="100vh">
-      <Container maxWidth="sm">
+      <Container maxWidth="xs">
         <Card>
           <CardContent
             sx={{
