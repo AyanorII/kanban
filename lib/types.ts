@@ -46,11 +46,17 @@ export interface TaskPayload {
   columnId: Column["id"];
 }
 
-export interface RequestError {
+export interface ResponseError {
   data: {
     statusCode: number;
     message: string;
     error: string;
   };
-  status: number
+  status: number;
 }
+
+export type AuthAction = "login" | "signup";
+
+export type AccessToken = {
+  accessToken: string;
+} | null;
