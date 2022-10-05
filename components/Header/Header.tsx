@@ -26,13 +26,12 @@ import AddEditBoardModal from "./AddEditBoardModal";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
+  drawerWidth: number;
 }
-
-const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+})<AppBarProps>(({ theme, open, drawerWidth }) => ({
   transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -63,6 +62,7 @@ const Header = () => {
   );
 
   const open = useSelector((state: RootState) => state.nav.open);
+  const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
 
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const { data: boards } = useBoardsQuery(undefined, {
@@ -74,7 +74,12 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="fixed" open={open} sx={{ bgcolor: DARK_GREY_COLOR }}>
+    <AppBar
+      position="fixed"
+      open={open}
+      drawerWidth={drawerWidth}
+      sx={{ bgcolor: DARK_GREY_COLOR }}
+    >
       <Toolbar sx={{ justifyContent: "space-between", paddingRight: 0 }}>
         <Stack
           flexDirection="row"
