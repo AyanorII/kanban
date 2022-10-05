@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AccessToken } from "../lib/types";
 interface UserState {
   accessToken: string;
   email: string;
@@ -39,16 +38,18 @@ export const userSlice = createSlice({
       };
     },
 
-    logout: (state, action) => {
+    logout: (state) => {
       window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem("currentBoard");
+      window.location.href = "/login";
       return {
         ...state,
         accessToken: "null",
         isLoading: true,
-      }
-    }
+      };
+    },
   },
 });
 
-export const { setAccessToken, resetAccessToken } = userSlice.actions;
+export const { setAccessToken, resetAccessToken, logout } = userSlice.actions;
 export default userSlice.reducer;

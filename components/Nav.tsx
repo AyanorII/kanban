@@ -1,15 +1,32 @@
+import LogoutIcon from "@mui/icons-material/Logout";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Button, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import { styled, SxProps } from "@mui/material/styles";
 import Image from "next/image";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ModalType } from "../lib/types";
 import { useBoardsQuery } from "../stores/api/boardsApi";
 import { toggleNav } from "../stores/navSlice";
 import { RootState } from "../stores/store";
-import { DARK_GREY_COLOR, MEDIUM_GREY_COLOR } from "../styles/theme";
+import { logout } from "../stores/userSlice";
+import {
+  DANGER_COLOR,
+  DANGER_LIGHT_COLOR,
+  DARK_GREY_COLOR,
+  MEDIUM_GREY_COLOR,
+} from "../styles/theme";
 import BoardList from "./Header/BoardList";
+import Modal from "./Modal/Modal";
 
 export const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -20,10 +37,19 @@ export const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 const Nav = () => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const openLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const closeLogoutModal = () => {
+    setIsLogoutModalOpen(false);
+  };
+
   const dispatch = useDispatch();
   const open = useSelector((state: RootState) => state.nav.open);
   const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
-
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
   const {
@@ -53,30 +79,55 @@ const Nav = () => {
   };
 
   return (
-    <Drawer sx={styles} variant="persistent" anchor="left" open={open}>
-      <ExpandDrawerButton open={open} toggleNavbar={toggleNavbar} />
-      <DrawerHeader>
-        <IconButton onClick={toggleNavbar}>
-          <Image src="/logo-light.svg" width="152px" height="25px" />
-        </IconButton>
-      </DrawerHeader>
-      <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}30` }} />
-      {isLoading && <div>Loading...</div>}
-      {boards && (
-        <Typography
-          variant="body1"
-          fontSize="1rem"
-          fontWeight={600}
-          letterSpacing="1.2px"
-          textTransform="uppercase"
-          color="text.secondary"
-          marginLeft={2}
-          gutterBottom
-          marginTop={3}
-        >{`All Boards (${boards?.length})`}</Typography>
-      )}
-      <BoardList />
-    </Drawer>
+    <>
+      <LogoutModal open={isLogoutModalOpen} onClose={closeLogoutModal} />
+      <Drawer sx={styles} variant="persistent" anchor="left" open={open}>
+        <ExpandDrawerButton open={open} toggleNavbar={toggleNavbar} />
+        <DrawerHeader>
+          <IconButton onClick={toggleNavbar}>
+            <Image src="/logo-light.svg" width="152px" height="25px" />
+          </IconButton>
+        </DrawerHeader>
+        <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}30` }} />
+        {isLoading && <div>Loading...</div>}
+        {boards && (
+          <Typography
+            variant="body1"
+            fontSize="1rem"
+            fontWeight={600}
+            letterSpacing="1.2px"
+            textTransform="uppercase"
+            color="text.secondary"
+            marginLeft={2}
+            gutterBottom
+            marginTop={3}
+          >{`All Boards (${boards?.length})`}</Typography>
+        )}
+        <BoardList />
+        {/* -------------------------- Logout Button ------------------------- */}
+        <Box mt="auto" width="100%">
+          <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}50`, mb: 3 }} />
+          <Button
+            variant="text"
+            endIcon={<LogoutIcon />}
+            size="large"
+            onClick={openLogoutModal}
+            fullWidth
+            sx={{
+              color: DANGER_LIGHT_COLOR,
+              mb: 4,
+              ml: 2,
+              justifyContent: "start",
+
+              "&:hover": { color: DANGER_COLOR },
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
+        {/* -------------------------- Logout Button ------------------------- */}
+      </Drawer>
+    </>
   );
 };
 
@@ -103,5 +154,38 @@ const ExpandDrawerButton = ({
     <Button variant="contained" sx={styles} onClick={toggleNavbar}>
       {open ? <VisibilityOffIcon /> : <VisibilityIcon />}
     </Button>
+  );
+};
+
+const LogoutModal = ({ open, onClose }: ModalType) => {
+  const dispatch = useDispatch();
+
+  const logoutUser = () => {
+    onClose();
+    dispatch(logout());
+  };
+
+  return (
+    <Modal open={open} onClose={onClose}>
+      <Typography variant="h5" mb={3}>Are you sure?</Typography>
+      <Stack flexDirection="row" justifyContent="space-between" gap={3}>
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          fullWidth
+          onClick={logoutUser}
+        >
+          Logout
+        </Button>
+      </Stack>
+    </Modal>
   );
 };
