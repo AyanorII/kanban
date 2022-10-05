@@ -1,6 +1,8 @@
-import { Divider, IconButton, Typography } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Button, Divider, IconButton, Typography } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
-import { styled } from "@mui/material/styles";
+import { styled, SxProps } from "@mui/material/styles";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useBoardsQuery } from "../stores/api/boardsApi";
@@ -22,29 +24,37 @@ const Nav = () => {
   const open = useSelector((state: RootState) => state.nav.open);
   const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
 
-  const accessToken = useSelector((state: RootState) => state.user.accessToken)
-  const { data: boards, isLoading, error } = useBoardsQuery(undefined, {
-    skip: !accessToken
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+
+  const {
+    data: boards,
+    isLoading,
+    error,
+  } = useBoardsQuery(undefined, {
+    skip: !accessToken,
   });
+
   const toggleNavbar = () => {
     dispatch(toggleNav());
   };
 
+  const styles: SxProps = {
+    width: drawerWidth,
+    flexShrink: 0,
+
+    "& .MuiDrawer-paper": {
+      position: "relative",
+      width: drawerWidth,
+      bgcolor: DARK_GREY_COLOR,
+      boxSizing: "border-box",
+      overflow: "visible",
+      visibility: "visible !important",
+    },
+  };
+
   return (
-    <Drawer
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: drawerWidth,
-          bgcolor: DARK_GREY_COLOR,
-          boxSizing: "border-box",
-        },
-      }}
-      variant="persistent"
-      anchor="left"
-      open={open}
-    >
+    <Drawer sx={styles} variant="persistent" anchor="left" open={open}>
+      <ExpandDrawerButton open={open} toggleNavbar={toggleNavbar} />
       <DrawerHeader>
         <IconButton onClick={toggleNavbar}>
           <Image src="/logo-light.svg" width="152px" height="25px" />
@@ -71,3 +81,27 @@ const Nav = () => {
 };
 
 export default Nav;
+
+type ExpandDrawerButtonProps = {
+  open: boolean;
+  toggleNavbar: () => void;
+};
+
+const ExpandDrawerButton = ({
+  open,
+  toggleNavbar,
+}: ExpandDrawerButtonProps) => {
+  const styles: SxProps = {
+    padding: 2,
+    borderRadius: "0 50% 50% 0",
+    position: "absolute",
+    bottom: "50px",
+    right: "-65px",
+  };
+
+  return (
+    <Button variant="contained" sx={styles} onClick={toggleNavbar}>
+      {open ? <VisibilityOffIcon /> : <VisibilityIcon />}
+    </Button>
+  );
+};
