@@ -1,5 +1,5 @@
 import Image from "next/image"
-import logo from "../public/logo-dark.svg"
+import logo from "../public/logo-light.svg"
 import logoMobile from "../public/logo-mobile.svg"
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 
 const Logo = ({mobile}: Props) => {
   return (
-    <Image src={mobile ? logoMobile : logo}/>
+    <Image src={mobile ? logoMobile : logo} alt="Kanban"/>
   )
 }
 
