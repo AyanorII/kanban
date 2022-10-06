@@ -1,5 +1,7 @@
 import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 import type { AppProps } from "next/app";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
 import Head from "../components/Head";
 import StoreProvider from "../stores/StoreProvider";
@@ -15,6 +17,17 @@ function MyApp({ Component, pageProps }: AppProps) {
           <MuiThemeProvider theme={muiTheme}>
             <GlobalStyle />
             <Component {...pageProps} />
+            <ToastContainer
+              position="bottom-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
+              pauseOnHover={false}
+            />
           </MuiThemeProvider>
         </SCThemeProvider>
       </StoreProvider>
