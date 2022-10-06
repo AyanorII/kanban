@@ -1,5 +1,7 @@
-import { AccessToken } from '../../lib/types';
-import { apiSlice } from '../apiSlice';
+import { toast } from "react-toastify";
+import { TOAST_OPTIONS } from "../../constants";
+import { AccessToken } from "../../lib/types";
+import { apiSlice } from "../apiSlice";
 export interface AuthPayload {
   email: string;
   password: string;
@@ -13,6 +15,17 @@ const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      transformResponse: async (
+        response: AccessToken | Promise<AccessToken>,
+        meta,
+        _args
+      ) => {
+        if (meta?.response?.ok) {
+          toast.success("Welcome back! :)", TOAST_OPTIONS);
+        }
+
+        return response;
+      },
     }),
 
     signup: builder.mutation<AccessToken, AuthPayload>({
@@ -21,6 +34,17 @@ const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      transformResponse: async (
+        response: AccessToken | Promise<AccessToken>,
+        meta,
+        _args
+      ) => {
+        if (meta?.response?.ok) {
+          toast.success("Welcome to Kanban! :)", TOAST_OPTIONS);
+        }
+
+        return response;
+      },
     }),
   }),
 });
