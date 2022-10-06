@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+import { TOAST_OPTIONS } from "../../constants";
 import { Column, Task, TaskPayload } from "../../lib/types";
 import { apiSlice } from "../apiSlice";
 
@@ -7,6 +9,7 @@ const tasksApi = apiSlice.injectEndpoints({
       query: (column: Column) => `/columns/${column.id}/tasks`,
       providesTags: ["Tasks"],
     }),
+
     updateTask: builder.mutation<Task, TaskPayload>({
       query: (task) => {
         const { id } = task;
@@ -17,8 +20,21 @@ const tasksApi = apiSlice.injectEndpoints({
           body: task,
         };
       },
+      transformResponse: async (
+        response: Task | Promise<Task>,
+        meta,
+        _args
+      ) => {
+        if (meta?.response?.status === 200) {
+          const { title } = await response;
+          toast.success(`Updated task '${title}'`, TOAST_OPTIONS);
+        }
+
+        return response;
+      },
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
+
     updateTaskStatus: builder.mutation<Task, Task>({
       query: (task) => {
         const { id } = task;
@@ -29,8 +45,21 @@ const tasksApi = apiSlice.injectEndpoints({
           body: task,
         };
       },
+      transformResponse: async (
+        response: Task | Promise<Task>,
+        meta,
+        _args
+      ) => {
+        if (meta?.response?.status === 200) {
+          const { title } = await response;
+          toast.success(`Updated status of task '${title}'`, TOAST_OPTIONS);
+        }
+
+        return response;
+      },
       invalidatesTags: ["Boards", "Columns", "Tasks"],
     }),
+
     createTask: builder.mutation<Task, TaskPayload>({
       query: (task) => {
         let { subtasks, ...rest } = task;
@@ -38,9 +67,22 @@ const tasksApi = apiSlice.injectEndpoints({
 
         return { url: "/tasks", method: "POST", body: { ...rest, subtasks } };
       },
+      transformResponse: async (
+        response: Task | Promise<Task>,
+        meta,
+        _args
+      ) => {
+        if (meta?.response?.status === 201) {
+          const { title } = await response;
+          toast.success(`Created task '${title}'`, TOAST_OPTIONS);
+        }
+
+        return response;
+      },
       invalidatesTags: ["Boards", "Columns", "Tasks", "Subtasks"],
     }),
-    deleteTask: builder.mutation<Task, any>({
+
+    deleteTask: builder.mutation<void, Task>({
       query: (task) => {
         const { id } = task;
 
@@ -48,6 +90,13 @@ const tasksApi = apiSlice.injectEndpoints({
           url: `/tasks/${id}`,
           method: "DELETE",
         };
+      },
+      transformResponse: (response: void | Promise<void>, meta, _args) => {
+        if (meta?.response?.status === 204) {
+          toast.success(`Deleted task`, TOAST_OPTIONS);
+        }
+
+        return response;
       },
       invalidatesTags: ["Columns", "Tasks"],
     }),
