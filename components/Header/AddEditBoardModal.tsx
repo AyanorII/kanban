@@ -83,7 +83,6 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
   };
 
   const onSubmit = async (data: BoardPayload): Promise<void> => {
-    console.log(data);
     try {
       if (isEditing) {
         const updatedBoard = await updateBoard({
