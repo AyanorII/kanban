@@ -69,7 +69,7 @@ const Nav = () => {
     flexShrink: 0,
 
     "& .MuiDrawer-paper": {
-      position: "relative",
+      position: "fixed",
       width: drawerWidth,
       bgcolor: DARK_GREY_COLOR,
       boxSizing: "border-box",

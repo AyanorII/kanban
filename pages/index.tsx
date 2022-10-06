@@ -1,10 +1,12 @@
-import { Container, Stack } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Triangle } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import ColumnsList from "../components/Columns/ColumnsList";
+import AddEditBoardModal from "../components/Header/AddEditBoardModal";
 import Layout from "../components/Layout";
 import { useBoardsQuery } from "../stores/api/boardsApi";
 import { setCurrentBoard } from "../stores/boardsSlice";
@@ -73,9 +75,51 @@ const Home: NextPage = () => {
     </Stack>
   ) : (
     <Layout>
-      <Container maxWidth={false}>{currentBoard && <ColumnsList />}</Container>
+      <Container maxWidth={false}>
+        {currentBoard ? (
+          <ColumnsList />
+        ) : (
+          !currentBoard && boards?.length === 0 && <NoBoards />
+        )}
+      </Container>
     </Layout>
   );
 };
 
 export default Home;
+
+const NoBoards = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <AddEditBoardModal open={open} onClose={handleClose} />
+      <Stack
+        justifyContent="center"
+        alignItems="center"
+        minHeight="calc(100vh - 130px)"
+        gap={3}
+      >
+        <Typography variant="h4" color="text.secondary">
+          No boards yet :(
+        </Typography>
+        <Button
+          onClick={handleOpen}
+          variant="contained"
+          size="large"
+          startIcon={<AddIcon />}
+        >
+          Create a board
+        </Button>
+      </Stack>
+    </>
+  );
+};

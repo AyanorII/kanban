@@ -39,8 +39,8 @@ export const userSlice = createSlice({
     },
 
     logout: (state) => {
-      window.localStorage.removeItem("accessToken");
       window.localStorage.removeItem("currentBoard");
+      window.localStorage.removeItem("accessToken");
       window.location.href = "/login";
       return {
         ...state,

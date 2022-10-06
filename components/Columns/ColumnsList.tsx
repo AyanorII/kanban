@@ -20,7 +20,11 @@ const ColumnsList = () => {
   }
 
   return (
-    <Stack flexDirection="row" gap={3} sx={{ position: "relative" }}>
+    <Stack
+      flexDirection="row"
+      gap={3}
+      sx={{ position: "relative", minHeight: "80vh" }}
+    >
       {columns?.map((column) => (
         <Column key={column.id} column={column} />
       ))}
