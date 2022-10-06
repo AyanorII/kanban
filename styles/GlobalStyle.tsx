@@ -1,7 +1,7 @@
 import { createGlobalStyle } from "styled-components";
-import { ScThemeType } from "./theme";
+import { DARK_BACKGROUND_COLOR } from "./theme";
 
-const GlobalStyle = createGlobalStyle<{ theme: ScThemeType }>`
+const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -13,7 +13,7 @@ const GlobalStyle = createGlobalStyle<{ theme: ScThemeType }>`
     min-height: 100vh;
     max-width: 100vw;
     overflow-x: auto;
-    background-color: ${({ theme }) => theme.colors.background.dark};
+    background-color: ${DARK_BACKGROUND_COLOR};
   }
 
   a {
