@@ -25,21 +25,9 @@ let muiTheme = createTheme({
       main: PRIMARY_COLOR,
       light: PRIMARY_LIGHT_COLOR,
     },
-    danger: {
+    error: {
       main: DANGER_COLOR,
       light: DANGER_LIGHT_COLOR,
-    },
-    background: {
-      dark: DARK_BACKGROUND_COLOR,
-      light: LIGHT_BACKGROUND_COLOR,
-    },
-    grey: {
-      dark: DARK_GREY_COLOR,
-      medium: MEDIUM_GREY_COLOR,
-    },
-    pitch: {
-      white: WHITE_COLOR,
-      black: BLACK_COLOR,
     },
     text: {
       primary: LIGHT_BACKGROUND_COLOR,
@@ -82,7 +70,7 @@ let muiTheme = createTheme({
           color: PRIMARY_COLOR,
           "&:hover": {
             backgroundColor: MEDIUM_GREY_COLOR,
-            color: WHITE_COLOR
+            color: WHITE_COLOR,
           },
         },
         containedError: {
@@ -205,6 +193,4 @@ const scTheme = {
   },
 };
 
-type ScThemeType = typeof scTheme;
-
-export { muiTheme, scTheme, ScThemeType };
+export { muiTheme, scTheme };
