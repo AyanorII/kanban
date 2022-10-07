@@ -116,7 +116,7 @@ const Nav = () => {
             sx={{
               color: DANGER_LIGHT_COLOR,
               mb: 4,
-              ml: 2,
+              pl: 3,
               justifyContent: "start",
 
               "&:hover": { color: DANGER_COLOR },
