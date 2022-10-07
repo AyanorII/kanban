@@ -2,10 +2,11 @@ import type { Middleware, MiddlewareAPI } from "@reduxjs/toolkit";
 
 export const authMiddleware: Middleware =
   (api: MiddlewareAPI) => (next) => (action) => {
-    if (action.payload?.status === 401) {
+    const isInLoginPage = window.location.pathname === "/login";
+    const isUnauthorized = action.payload?.status === 401;
+
+    if (isUnauthorized && !isInLoginPage) {
       api.dispatch({ type: "user/logout" });
-      api.dispatch({ type: "boards/resetCurrentBoard" });
-      window.location.href = "/login";
     }
 
     return next(action);

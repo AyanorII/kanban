@@ -42,11 +42,8 @@ export const userSlice = createSlice({
       window.localStorage.removeItem("currentBoard");
       window.localStorage.removeItem("accessToken");
       window.location.href = "/login";
-      return {
-        ...state,
-        accessToken: "null",
-        isLoading: true,
-      };
+
+      return state;
     },
   },
 });
