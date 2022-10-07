@@ -13,6 +13,7 @@ import { setCurrentBoard } from "../stores/boardsSlice";
 import { RootState } from "../stores/store";
 import { setAccessToken } from "../stores/userSlice";
 import { PRIMARY_COLOR } from "../styles/theme";
+import Loading from '../components/Loading';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
@@ -63,16 +64,7 @@ const Home: NextPage = () => {
   }, [accessToken, boards]);
 
   return isLoading || !accessToken ? (
-    <Stack justifyContent="center" alignItems="center" minHeight="100vh">
-      <Triangle
-        height="50vh"
-        width="50vw"
-        color={PRIMARY_COLOR}
-        ariaLabel="triangle-loading"
-        wrapperStyle={{}}
-        visible={true}
-      />
-    </Stack>
+    <Loading />
   ) : (
     <Layout>
       <Container maxWidth={false}>

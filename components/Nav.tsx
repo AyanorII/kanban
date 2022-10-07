@@ -26,6 +26,7 @@ import {
   MEDIUM_GREY_COLOR,
 } from "../styles/theme";
 import BoardList from "./Header/BoardList";
+import Loading from "./Loading";
 import Modal from "./Modal/Modal";
 
 export const DrawerHeader = styled("div")(({ theme }) => ({
@@ -89,7 +90,7 @@ const Nav = () => {
           </IconButton>
         </DrawerHeader>
         <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}30` }} />
-        {isLoading && <div>Loading...</div>}
+        {isLoading && <Loading />}
         {boards && (
           <Typography
             variant="body1"
