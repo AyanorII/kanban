@@ -7,25 +7,27 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { AuthAction, ResponseError } from "../lib/types";
+import { AUTH_PROVIDERS } from "../../lib/config";
+import { capitalize } from "../../lib/helpers";
+import { AuthAction, AuthProvider, ResponseError } from "../../lib/types";
 import {
   AuthPayload,
   useLoginMutation,
-  useSignupMutation,
-} from "../stores/api/authApi";
-import { setAccessToken } from "../stores/userSlice";
+  useSignUpMutation,
+} from "../../stores/api/authApi";
+import { setAccessToken } from "../../stores/userSlice";
 import {
   DANGER_COLOR,
   DARK_GREY_COLOR,
   MEDIUM_GREY_COLOR,
   WHITE_COLOR,
-} from "../styles/theme";
-import Input from "./Input";
-import Logo from "./Logo";
+} from "../../styles/theme";
+import Input from "../Input";
+import Logo from "../Logo";
+import ProviderButton from "./ProviderButton";
 
 type Props = {
   action: AuthAction;
@@ -33,18 +35,6 @@ type Props = {
 
 const Auth = ({ action }: Props) => {
   const [error, setError] = useState("");
-
-  const router = useRouter();
-
-  useEffect(() => {
-    if (window) {
-      const accessToken = window.localStorage.getItem("accessToken");
-
-      if (accessToken) {
-        router.push("/");
-      }
-    }
-  }, []);
 
   const defaultValues: AuthPayload = {
     email: "",
@@ -57,23 +47,22 @@ const Auth = ({ action }: Props) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const capitalizedAction = action[0].toUpperCase() + action.slice(1);
+  const capitalizedAction = capitalize(action);
 
-  const [login, { isLoading: isLoginLoading }] = useLoginMutation();
-  const [signup, { isLoading: isSignupLoading }] = useSignupMutation();
+  const [login] = useLoginMutation();
+  const [signUp] = useSignUpMutation();
 
   const dispatch = useDispatch();
 
-  const onSubmit = async (data: AuthPayload): Promise<void> => {
+  const authenticateUser = async (data: AuthPayload): Promise<void> => {
     try {
       const response =
         action === "login"
           ? await login(data).unwrap()
-          : await signup(data).unwrap();
+          : await signUp(data).unwrap();
 
       if (response!.accessToken) {
         dispatch(setAccessToken(response!.accessToken));
-        router.push("/");
       }
     } catch (err) {
       const responseError = err as ResponseError;
@@ -102,7 +91,7 @@ const Auth = ({ action }: Props) => {
             >
               {capitalizedAction}
             </Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(authenticateUser)}>
               <Stack gap={2}>
                 <Input
                   control={control}
@@ -163,6 +152,7 @@ const Auth = ({ action }: Props) => {
                 </div>
               </Stack>
             </form>
+            <ProvidersList />
             <Box textAlign="center">
               {action === "login" ? (
                 <Typography
@@ -198,3 +188,20 @@ const Auth = ({ action }: Props) => {
 };
 
 export default Auth;
+
+const ProvidersList = () => {
+  return (
+    <Stack flexDirection="row" gap={3} justifyContent="center" mb={3}>
+      {AUTH_PROVIDERS.map(({ provider, icon, url }: AuthProvider) => {
+        return (
+          <ProviderButton
+            key={provider}
+            provider={provider}
+            icon={icon}
+            url={url}
+          />
+        );
+      })}
+    </Stack>
+  );
+};
