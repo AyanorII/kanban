@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 interface UserState {
   accessToken: string;
   email: string;
@@ -17,11 +17,14 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setAccessToken: (
-      state,
-      action: PayloadAction<UserState["accessToken"]>
-    ) => {
+    setAccessToken: (state, action) => {
       window.localStorage.setItem("accessToken", action.payload);
+
+      const isInAuthPage = window.location.pathname === "/login";
+      if (isInAuthPage) {
+        window.location.href = "/";
+      }
+
       return {
         ...state,
         accessToken: action.payload,
@@ -39,8 +42,7 @@ export const userSlice = createSlice({
     },
 
     logout: (state) => {
-      window.localStorage.removeItem("currentBoard");
-      window.localStorage.removeItem("accessToken");
+      window.localStorage.clear();
       window.location.href = "/login";
 
       return state;

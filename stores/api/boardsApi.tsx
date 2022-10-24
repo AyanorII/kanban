@@ -1,7 +1,7 @@
+import { toast } from "react-toastify";
+import { TOAST_OPTIONS } from "../../constants";
 import { Board } from "../../lib/types";
 import { apiSlice } from "../apiSlice";
-import { toast } from 'react-toastify';
-import { TOAST_OPTIONS } from "../../constants";
 
 export interface BoardPayload {
   id?: number;
@@ -31,15 +31,19 @@ const boardsApi = apiSlice.injectEndpoints({
           body: { ...payload, columns },
         };
       },
-      transformResponse: async (response: Board | Promise<Board>, meta, args) => {
+      transformResponse: async (
+        response: Board | Promise<Board>,
+        meta,
+        args
+      ) => {
         const created = meta?.response?.status === 201;
-        const { name } = await response
+        const { name } = await response;
 
         if (created) {
           toast.success(`Created board '${name}'`, TOAST_OPTIONS);
         }
 
-        return response
+        return response;
       },
       invalidatesTags: ["Boards"],
     }),
