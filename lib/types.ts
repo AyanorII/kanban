@@ -60,3 +60,15 @@ export type AuthAction = "login" | "signup";
 export type AccessToken = {
   accessToken: string;
 } | null;
+
+export type Provider = "google" | "github" | "facebook";
+export interface AuthProvider {
+  provider: Provider;
+  icon: React.ReactNode;
+  url: string;
+}
+
+export interface AuthDto {
+  email: string;
+  password: string;
+}
