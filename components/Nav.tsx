@@ -28,6 +28,8 @@ import {
 import BoardList from "./Header/BoardList";
 import Loading from "./Loading";
 import Modal from "./Modal/Modal";
+import { signOut } from 'firebase/auth';
+import { auth } from "../lib/firebase";
 
 export const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -56,7 +58,7 @@ const Nav = () => {
   const {
     data: boards,
     isLoading,
-    error,
+    _error,
   } = useBoardsQuery(undefined, {
     skip: !accessToken,
   });
@@ -164,6 +166,7 @@ const LogoutModal = ({ open, onClose }: ModalType) => {
   const logoutUser = () => {
     onClose();
     dispatch(logout());
+    signOut(auth as any)
   };
 
   return (
