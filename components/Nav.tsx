@@ -2,6 +2,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -11,9 +12,12 @@ import {
 } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import { styled, SxProps } from "@mui/material/styles";
+import { signOut } from "firebase/auth";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
+import { auth } from "../lib/firebase";
 import { ModalType } from "../lib/types";
 import { useBoardsQuery } from "../stores/api/boardsApi";
 import { toggleNav } from "../stores/navSlice";
@@ -28,8 +32,6 @@ import {
 import BoardList from "./Header/BoardList";
 import Loading from "./Loading";
 import Modal from "./Modal/Modal";
-import { signOut } from 'firebase/auth';
-import { auth } from "../lib/firebase";
 
 export const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -55,11 +57,7 @@ const Nav = () => {
   const drawerWidth = useSelector((state: RootState) => state.nav.drawerWidth);
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
-  const {
-    data: boards,
-    isLoading,
-    _error,
-  } = useBoardsQuery(undefined, {
+  const { data: boards, isLoading } = useBoardsQuery(undefined, {
     skip: !accessToken,
   });
 
@@ -109,6 +107,7 @@ const Nav = () => {
         <BoardList />
         {/* -------------------------- Logout Button ------------------------- */}
         <Box mt="auto" width="100%">
+          <UserInfo />
           <Divider sx={{ bgcolor: `${MEDIUM_GREY_COLOR}50`, mb: 3 }} />
           <Button
             variant="text"
@@ -166,12 +165,14 @@ const LogoutModal = ({ open, onClose }: ModalType) => {
   const logoutUser = () => {
     onClose();
     dispatch(logout());
-    signOut(auth as any)
+    signOut(auth as any);
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Typography variant="h5" mb={3}>Are you sure?</Typography>
+      <Typography variant="h5" mb={3}>
+        Are you sure?
+      </Typography>
       <Stack flexDirection="row" justifyContent="space-between" gap={3}>
         <Button
           variant="contained"
@@ -191,5 +192,24 @@ const LogoutModal = ({ open, onClose }: ModalType) => {
         </Button>
       </Stack>
     </Modal>
+  );
+};
+
+const UserInfo = () => {
+  const [user] = useAuthState(auth as any);
+
+  const usernameOrEmail = user?.displayName || user?.email;
+
+  return (
+    <Stack flexDirection="row" alignItems="center" gap={1.5} ml={2} mb={2}>
+      <Avatar
+        alt={usernameOrEmail!}
+        src={user?.photoURL as string | undefined}
+        imgProps={{ referrerPolicy: "no-referrer" }}
+      />
+      <Typography paragraph mb={0}>
+        {usernameOrEmail}
+      </Typography>
+    </Stack>
   );
 };
