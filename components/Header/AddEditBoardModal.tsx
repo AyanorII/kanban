@@ -11,7 +11,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { Board, ModalType, ResponseError } from "../../lib/types";
+import { Board, ModalType, ServerError } from "../../lib/types";
 import {
   BoardPayload,
   useCreateBoardMutation,
@@ -96,7 +96,7 @@ const AddEditBoardModal = ({ open, onClose, board }: Props) => {
       reset();
       onClose();
     } catch (err) {
-      const { data: error, status } = err as ResponseError;
+      const { data: error, status } = err as ServerError;
       setError("name", { message: error.message });
     }
   };
