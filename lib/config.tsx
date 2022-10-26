@@ -1,10 +1,23 @@
 import GoogleIcon from "@mui/icons-material/Google";
-import { AuthProvider } from "./types";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import { AuthProvider, Provider } from "./types";
+import { FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider } from 'firebase/auth';
 
-export const AUTH_PROVIDERS: AuthProvider[] = [
+export const AUTH_PROVIDERS: Provider[] = [
   {
-    provider: "google",
+    name: "google",
+    provider: new GoogleAuthProvider(),
     icon: <GoogleIcon />,
-    url: process.env.NEXT_PUBLIC_API_URL + "/auth/google",
   },
+  {
+    name: "github",
+    provider: new GithubAuthProvider(),
+    icon: <GitHubIcon />,
+  },
+  {
+    name: "facebook",
+    provider: new FacebookAuthProvider(),
+    icon: <FacebookIcon />,
+  }
 ];

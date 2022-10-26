@@ -1,3 +1,8 @@
+import {
+  facebookAuthProvider,
+  githubAuthProvider,
+  googleAuthProvider,
+} from "./firebase";
 export interface Board {
   id: number;
   name: string;
@@ -46,7 +51,7 @@ export interface TaskPayload {
   columnId: Column["id"];
 }
 
-export interface ResponseError {
+export interface ServerError {
   data: {
     statusCode: number;
     message: string;
@@ -57,15 +62,27 @@ export interface ResponseError {
 
 export type AuthAction = "login" | "signup";
 
-export type AccessToken = {
-  accessToken: string;
-} | null;
+export type AccessToken = string | null;
 
-export type Provider = "google" | "github" | "facebook";
-export interface AuthProvider {
-  provider: Provider;
+export interface AuthResponse {
+  accessToken: AccessToken;
+}
+
+export type ResponseData<T> = {
+  data: T;
+};
+
+export type ProviderName = "google" | "github" | "facebook";
+
+export type AuthProvider =
+  | typeof googleAuthProvider
+  | typeof githubAuthProvider
+  | typeof facebookAuthProvider;
+
+export interface Provider {
+  name: ProviderName;
+  provider: AuthProvider;
   icon: React.ReactNode;
-  url: string;
 }
 
 export interface AuthDto {

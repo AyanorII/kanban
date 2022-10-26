@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { TOAST_OPTIONS } from "../../constants";
-import { AccessToken, AuthDto, Provider } from "../../lib/types";
+import { AccessToken, AuthDto, AuthResponse } from '../../lib/types';
 import { apiSlice } from "../apiSlice";
 export interface AuthPayload {
   email: string;
@@ -47,16 +47,13 @@ const authApi = apiSlice.injectEndpoints({
       },
     }),
 
-    signInWithProvider: builder.mutation<
-      AccessToken,
-      { provider: Provider; authDto: AuthDto }
-    >({
-      query: ({ provider, authDto }) => ({
-        url: `/auth/${provider.toLowerCase()}`,
+    signInWithProvider: builder.mutation<AccessToken, AuthDto>({
+      query: (authDto) => ({
+        url: `/auth/provider`,
         method: "POST",
         body: authDto,
       }),
-      transformResponse: async (response: any, _meta, _args) => {
+      transformResponse: async (response: AuthResponse, _meta, _args) => {
         return response.accessToken;
       },
     }),

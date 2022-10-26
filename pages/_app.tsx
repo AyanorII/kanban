@@ -27,6 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               pauseOnFocusLoss={false}
               draggable
               pauseOnHover={false}
+              theme="colored"
             />
           </MuiThemeProvider>
         </SCThemeProvider>

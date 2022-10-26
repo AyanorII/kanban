@@ -1,3 +1,8 @@
+import {
+  FacebookAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,3 +27,7 @@ if (!firebase.apps.length) {
 }
 
 export const auth = firebase.auth();
+
+export const googleAuthProvider = new GoogleAuthProvider();
+export const facebookAuthProvider = new FacebookAuthProvider();
+export const githubAuthProvider = new GithubAuthProvider();

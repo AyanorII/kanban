@@ -1,15 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 interface UserState {
   accessToken: string;
-  email: string;
-  photo?: string;
+  user: {
+    email: string;
+    photo?: string;
+    name?: string;
+  };
   isLoading: boolean;
 }
 
 const initialState: UserState = {
   accessToken: "",
-  email: "",
-  photo: "",
+  user: {
+    email: "",
+    photo: "",
+    name: "",
+  },
   isLoading: true,
 };
 
@@ -20,7 +26,10 @@ export const userSlice = createSlice({
     setAccessToken: (state, action) => {
       window.localStorage.setItem("accessToken", action.payload);
 
-      const isInAuthPage = window.location.pathname === "/login";
+      const isInAuthPage =
+        window.location.pathname === "/login" ||
+        window.location.pathname === "/signup";
+
       if (isInAuthPage) {
         window.location.href = "/";
       }
@@ -32,12 +41,10 @@ export const userSlice = createSlice({
       };
     },
 
-    resetAccessToken: (state, action) => {
-      window.localStorage.removeItem("accessToken");
+    setUser: (state, action) => {
       return {
         ...state,
-        accessToken: "",
-        isLoading: false,
+        user: action.payload,
       };
     },
 
@@ -50,5 +57,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setAccessToken, resetAccessToken, logout } = userSlice.actions;
+export const { setAccessToken, setUser, logout } = userSlice.actions;
 export default userSlice.reducer;

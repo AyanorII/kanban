@@ -3,17 +3,15 @@ import { Button, Container, Stack, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Triangle } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import ColumnsList from "../components/Columns/ColumnsList";
 import AddEditBoardModal from "../components/Header/AddEditBoardModal";
 import Layout from "../components/Layout";
+import Loading from "../components/Loading";
 import { useBoardsQuery } from "../stores/api/boardsApi";
 import { setCurrentBoard } from "../stores/boardsSlice";
 import { RootState } from "../stores/store";
 import { setAccessToken } from "../stores/userSlice";
-import { PRIMARY_COLOR } from "../styles/theme";
-import Loading from '../components/Loading';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();

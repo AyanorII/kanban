@@ -8,15 +8,20 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import { AUTH_PROVIDERS } from "../../lib/config";
+import { auth } from "../../lib/firebase";
 import { capitalize } from "../../lib/helpers";
-import { AuthAction, AuthProvider, ResponseError } from "../../lib/types";
+import { AuthAction, AuthDto, Provider, ServerError } from "../../lib/types";
 import {
   AuthPayload,
-  useLoginMutation,
-  useSignUpMutation,
+  useSignInWithProviderMutation,
 } from "../../stores/api/authApi";
 import { setAccessToken } from "../../stores/userSlice";
 import {
@@ -34,6 +39,8 @@ type Props = {
 };
 
 const Auth = ({ action }: Props) => {
+  const dispatch = useDispatch();
+
   const [error, setError] = useState("");
 
   const defaultValues: AuthPayload = {
@@ -49,24 +56,40 @@ const Auth = ({ action }: Props) => {
 
   const capitalizedAction = capitalize(action);
 
-  const [login] = useLoginMutation();
-  const [signUp] = useSignUpMutation();
+  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(
+    auth as any
+  );
 
-  const dispatch = useDispatch();
+  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(
+    auth as any
+  );
 
-  const authenticateUser = async (data: AuthPayload): Promise<void> => {
+  const [signInWithProvider] = useSignInWithProviderMutation();
+
+  const authenticateUser = async ({
+    email,
+    password,
+  }: AuthPayload): Promise<void> => {
     try {
-      const response =
-        action === "login"
-          ? await login(data).unwrap()
-          : await signUp(data).unwrap();
-
-      if (response!.accessToken) {
-        dispatch(setAccessToken(response!.accessToken));
-      }
+      action === "login"
+        ? await signInWithEmailAndPassword(email, password)
+        : await createUserWithEmailAndPassword(email, password);
+      await signInUserOnServer({ email, password });
     } catch (err) {
-      const responseError = err as ResponseError;
+      const responseError = err as ServerError;
       setError(responseError.data.message);
+    }
+  };
+
+  const signInUserOnServer = async (authDto: AuthDto) => {
+    try {
+      const accessToken = await signInWithProvider(authDto).unwrap();
+
+      dispatch(setAccessToken(accessToken));
+    } catch (err) {
+      toast.error("Oops! Something went wrong. Please try again.", {
+        theme: "colored",
+      });
     }
   };
 
@@ -152,7 +175,7 @@ const Auth = ({ action }: Props) => {
                 </div>
               </Stack>
             </form>
-            <ProvidersList />
+            <ProvidersList action={action} />
             <Box textAlign="center">
               {action === "login" ? (
                 <Typography
@@ -189,19 +212,29 @@ const Auth = ({ action }: Props) => {
 
 export default Auth;
 
-const ProvidersList = () => {
+type ProvidersListProps = {
+  action: AuthAction;
+};
+
+const ProvidersList = ({ action }: ProvidersListProps) => {
   return (
-    <Stack flexDirection="row" gap={3} justifyContent="center" mb={3}>
-      {AUTH_PROVIDERS.map(({ provider, icon, url }: AuthProvider) => {
-        return (
-          <ProviderButton
-            key={provider}
-            provider={provider}
-            icon={icon}
-            url={url}
-          />
-        );
-      })}
-    </Stack>
+    <Box>
+      <Typography paragraph textAlign="center" color="text.secondary">
+        Or {action === "login" ? "login" : "sign up"} using a social media
+        account
+      </Typography>
+      <Stack flexDirection="row" gap={3} justifyContent="center" mb={3}>
+        {AUTH_PROVIDERS.map(({ name, provider, icon }: Provider) => {
+          return (
+            <ProviderButton
+              key={name}
+              name={name}
+              provider={provider}
+              icon={icon}
+            />
+          );
+        })}
+      </Stack>
+    </Box>
   );
 };

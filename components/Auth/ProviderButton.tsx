@@ -1,53 +1,53 @@
 import { Fab } from "@mui/material";
-import { signOut } from "firebase/auth";
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { useDispatch } from "react-redux";
+import { signInWithPopup } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { auth } from "../../lib/firebase";
-import { AuthProvider } from "../../lib/types";
+import { AccessToken, Provider, ResponseData } from "../../lib/types";
 import { useSignInWithProviderMutation } from "../../stores/api/authApi";
+import { RootState } from "../../stores/store";
 import { setAccessToken } from "../../stores/userSlice";
 
-const ProviderButton = ({ provider, icon, url }: AuthProvider) => {
+const ProviderButton = ({ name, provider, icon }: Provider) => {
   const dispatch = useDispatch();
-  const [signInWithGoogle] = useSignInWithGoogle(auth as any);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const [authenticateOnServer] = useSignInWithProviderMutation();
 
   const [_user, _loading, _error] = useAuthState(auth as any, {
-    onUserChanged: async (user) => {
-      if (user) {
-        try {
-          const { email, uid } = user;
-          const accessToken = await signInWithProvider({
-            provider: "google",
-            authDto: {
-              email: email!,
-              password: uid,
-            },
-          }).unwrap();
+    onUserChanged: async (usr) => {
+      if (usr && !accessToken) {
+        const { uid, email } = usr;
 
-          dispatch(setAccessToken(accessToken));
-        } catch (err) {
-          toast.error("Oops! Something went wrong. Please try again.", {
-            theme: "colored",
-          });
-        }
+        const response = (await authenticateOnServer({
+          email: email!,
+          password: uid,
+        })) as ResponseData<AccessToken>;
+
+        const token  = response.data ;
+        dispatch(setAccessToken(token));
       }
     },
   });
 
-  const [signInWithProvider] = useSignInWithProviderMutation();
-
   const handleClick = async () => {
-    await signInWithGoogle();
+    try {
+      await signInWithPopup(auth as any, provider);
+    } catch (err) {
+      if (err instanceof Error) {
+        const errorMessage = err.message
+          .replace("Firebase: ", "")
+          .replace(/\(auth.*/, "");
+
+        toast.error(errorMessage);
+      }
+    }
   };
 
   return (
-    <>
-      <button onClick={() => signOut(auth)}>tes</button>
-      <Fab onClick={handleClick} aria-label={provider} size="small">
-        {icon}
-      </Fab>
-    </>
+    <Fab onClick={handleClick} aria-label={name} size="small">
+      {icon}
+    </Fab>
   );
 };
 
