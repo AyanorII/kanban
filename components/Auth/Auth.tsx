@@ -14,14 +14,14 @@ import {
 } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 import { AUTH_PROVIDERS } from "../../lib/config";
 import { auth } from "../../lib/firebase";
 import { capitalize } from "../../lib/helpers";
-import { AuthAction, AuthDto, Provider, ServerError } from "../../lib/types";
+import { AuthAction, Provider, ServerError } from "../../lib/types";
 import {
   AuthPayload,
-  useSignInWithProviderMutation,
+  useLoginMutation,
+  useSignUpMutation,
 } from "../../stores/api/authApi";
 import { setAccessToken } from "../../stores/userSlice";
 import {
@@ -59,37 +59,32 @@ const Auth = ({ action }: Props) => {
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(
     auth as any
   );
+  const [signUp] = useSignUpMutation();
 
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(
     auth as any
   );
-
-  const [signInWithProvider] = useSignInWithProviderMutation();
+  const [login] = useLoginMutation();
 
   const authenticateUser = async ({
     email,
     password,
   }: AuthPayload): Promise<void> => {
     try {
-      action === "login"
-        ? await signInWithEmailAndPassword(email, password)
-        : await createUserWithEmailAndPassword(email, password);
-      await signInUserOnServer({ email, password });
+      if (action === "login") {
+        await signInWithEmailAndPassword(email, password);
+        const response = await login({ email, password }).unwrap();
+        const { accessToken } = response;
+        dispatch(setAccessToken(accessToken));
+      } else {
+        await createUserWithEmailAndPassword(email, password);
+        const response = await signUp({ email, password }).unwrap();
+        const { accessToken } = response;
+        dispatch(setAccessToken(accessToken));
+      }
     } catch (err) {
       const responseError = err as ServerError;
       setError(responseError.data.message);
-    }
-  };
-
-  const signInUserOnServer = async (authDto: AuthDto) => {
-    try {
-      const accessToken = await signInWithProvider(authDto).unwrap();
-
-      dispatch(setAccessToken(accessToken));
-    } catch (err) {
-      toast.error("Oops! Something went wrong. Please try again.", {
-        theme: "colored",
-      });
     }
   };
 

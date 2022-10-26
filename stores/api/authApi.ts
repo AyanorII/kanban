@@ -9,14 +9,14 @@ export interface AuthPayload {
 
 const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<AccessToken, AuthPayload>({
+    login: builder.mutation<AuthResponse, AuthPayload>({
       query: (payload) => ({
         url: "/auth/login",
         method: "POST",
         body: payload,
       }),
       transformResponse: async (
-        response: AccessToken | Promise<AccessToken>,
+        response: AuthResponse | Promise<AuthResponse>,
         meta,
         _args
       ) => {
@@ -28,14 +28,14 @@ const authApi = apiSlice.injectEndpoints({
       },
     }),
 
-    signUp: builder.mutation<AccessToken, AuthPayload>({
+    signUp: builder.mutation<AuthResponse, AuthPayload>({
       query: (payload) => ({
         url: "/auth/signup",
         method: "POST",
         body: payload,
       }),
       transformResponse: async (
-        response: AccessToken | Promise<AccessToken>,
+        response: AuthResponse | Promise<AuthResponse>,
         meta,
         _args
       ) => {

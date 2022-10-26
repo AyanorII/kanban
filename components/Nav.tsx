@@ -201,13 +201,28 @@ const UserInfo = () => {
   const usernameOrEmail = user?.displayName || user?.email;
 
   return (
-    <Stack flexDirection="row" alignItems="center" gap={1.5} ml={2} mb={2}>
+    <Stack
+      flexDirection="row"
+      alignItems="center"
+      gap={1.5}
+      ml={2}
+      mb={2}
+      overflow="hidden"
+      maxWidth="100%"
+    >
       <Avatar
         alt={usernameOrEmail!}
         src={user?.photoURL as string | undefined}
         imgProps={{ referrerPolicy: "no-referrer" }}
       />
-      <Typography paragraph mb={0}>
+      <Typography
+        paragraph
+        mb={0}
+        maxWidth="100%"
+        paddingRight={1}
+        overflow="hidden"
+        textOverflow="ellipsis"
+      >
         {usernameOrEmail}
       </Typography>
     </Stack>
