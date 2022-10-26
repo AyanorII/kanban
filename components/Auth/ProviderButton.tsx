@@ -15,13 +15,10 @@ const ProviderButton = ({ name, provider, icon }: Provider) => {
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const [authenticateOnServer] = useSignInWithProviderMutation();
 
-  const [user, _loading, _error] = useAuthState(auth as any);
-
-  const handleClick = async () => {
-    try {
-      await signInWithPopup(auth as any, provider);
-      if (user && !accessToken) {
-        const { uid, email } = user;
+  const [_user, _loading, _error] = useAuthState(auth as any, {
+    onUserChanged: async (usr) => {
+      if (usr && !accessToken) {
+        const { uid, email } = usr;
 
         const response = (await authenticateOnServer({
           email: email!,
@@ -31,6 +28,12 @@ const ProviderButton = ({ name, provider, icon }: Provider) => {
         const token = response.data;
         dispatch(setAccessToken(token));
       }
+    },
+  });
+
+  const handleClick = async () => {
+    try {
+      await signInWithPopup(auth as any, provider);
     } catch (err) {
       if (err instanceof Error) {
         const errorMessage = err.message

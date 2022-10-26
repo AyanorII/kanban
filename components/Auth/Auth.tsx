@@ -1,9 +1,13 @@
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
   Box,
   Button,
   Card,
   CardContent,
   Container,
+  IconButton,
+  InputAdornment,
   Stack,
   Typography,
 } from "@mui/material";
@@ -42,6 +46,11 @@ const Auth = ({ action }: Props) => {
   const dispatch = useDispatch();
 
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const defaultValues: AuthPayload = {
     email: "",
@@ -131,10 +140,26 @@ const Auth = ({ action }: Props) => {
                   control={control}
                   name="password"
                   label="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="********"
                   error={Boolean(errors.password)}
                   errorMessage={errors.password?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={toggleShowPassword}
+                          sx={{ color: "#FFF" }}
+                        >
+                          {showPassword ? (
+                            <VisibilityIcon />
+                          ) : (
+                            <VisibilityOffIcon />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   rules={{
                     required: {
                       value: true,
