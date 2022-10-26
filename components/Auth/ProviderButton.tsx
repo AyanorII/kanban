@@ -8,6 +8,7 @@ import { AccessToken, Provider, ResponseData } from "../../lib/types";
 import { useSignInWithProviderMutation } from "../../stores/api/authApi";
 import { RootState } from "../../stores/store";
 import { setAccessToken } from "../../stores/userSlice";
+import { LIGHT_BACKGROUND_COLOR, PRIMARY_COLOR } from "../../styles/theme";
 
 const ProviderButton = ({ name, provider, icon }: Provider) => {
   const dispatch = useDispatch();
@@ -42,7 +43,18 @@ const ProviderButton = ({ name, provider, icon }: Provider) => {
   };
 
   return (
-    <Fab onClick={handleClick} aria-label={name} size="small">
+    <Fab
+      onClick={handleClick}
+      aria-label={name}
+      size="small"
+      sx={{
+        backgroundColor: LIGHT_BACKGROUND_COLOR,
+
+        "&:hover": {
+          backgroundColor: PRIMARY_COLOR,
+        },
+      }}
+    >
       {icon}
     </Fab>
   );
