@@ -4,6 +4,8 @@
 Full-stack task-management app built with NestJS, Next.js and Firebase.
 You can check the original project idea from [Frontend Mentor](https://www.frontendmentor.io/challenges/kanban-task-management-web-app-wgQLt-HlbB).
 
+Link to the **[project](https://kanban-delta.vercel.app/)**
+
 
 ## Tech Stack
 
