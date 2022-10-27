@@ -9,9 +9,9 @@ Link to the **[project](https://kanban-delta.vercel.app/)**
 
 ## Tech Stack
 
-**Client:** Next.js, Redux Toolkit, Material UI, Firebase
+**Client:** TypeScript, Next.js, Redux Toolkit, Material UI, Firebase
 
-**Server:** NestJS, PostgreSQL, Prisma
+**Server:** TypeScript, NestJS, PostgreSQL, Prisma
 
 
 ## Screenshots
