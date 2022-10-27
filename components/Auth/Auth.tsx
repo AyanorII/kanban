@@ -129,7 +129,10 @@ const Auth = ({ action }: Props) => {
                   error={Boolean(errors.email)}
                   errorMessage={errors.email?.message}
                   rules={{
-                    required: { value: true, message: "Email can't be blank" },
+                    required: {
+                      value: true,
+                      message: "Email can't be blank",
+                    },
                     pattern: {
                       value: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
                       message: "Wrong email format",
